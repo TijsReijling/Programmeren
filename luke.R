@@ -10,7 +10,7 @@
 setwd("~/GitHub/Programmeren/data")
 
 library(readr)
-Welzijn.Goed <- read_delim("C:/Users/Luke Eising/Downloads/85542NED_UntypedDataSet_03062025_093918.csv", 
+Welzijn_Goed <- read_delim("C:/Users/Luke Eising/Downloads/85542NED_UntypedDataSet_03062025_093918.csv", 
                                 delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 library(readr)
@@ -27,7 +27,7 @@ Levensverwachting <- read_csv("Levensverwachting.csv")
 
 write.csv(`Ervaren Gezondheid`, "Ervaren_Gezondheid.csv")
 
-write.csv(Welzijn.goed, "Welzijn.goed.csv")
+write.csv(Welzijn_goed, "Welzijn.goed.csv")
 
 #Load Data
 library(readr)
@@ -58,7 +58,7 @@ Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perio
 Welzijn_goed <- Welzijn_goed[Welzijn_goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 
 #Isolate
-Welzijn_averages <- Welzijn.goed %>%
+Welzijn_averages <- Welzijn_goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
     Perioden = "2015–2018",
@@ -75,7 +75,7 @@ setdiff(names(Welzijn_goed), names(Welzijn_averages))
 
 sapply(Welzijn_goed[setdiff(names(Welzijn_goed), names(Welzijn_averages))], class)
 
-#Change the columns in Welzijn.Goed that are not numeric to numeric
+#Change the columns in Welzijn_goed that are not numeric to numeric
 
 Welzijn_goed <- Welzijn_goed %>%
   mutate(across(all_of(c(
@@ -87,7 +87,7 @@ Welzijn_goed <- Welzijn_goed %>%
 
 #Rerun the averaging process after converting the columns to numeric
 
-Welzijn_averages <- Welzijn.goed %>%
+Welzijn_averages <- Welzijn_goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
     Perioden = "2015–2018",
@@ -98,7 +98,7 @@ Welzijn_averages <- Welzijn.goed %>%
   relocate(ID, .before = Kenmerken)
 
 #Check if the columns in Welzijn and Welzijn_averages are the same again
-setdiff(names(Welzijn.goed), names(Welzijn_averages))
+setdiff(names(Welzijn_goed), names(Welzijn_averages))
 
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv", col_names = TRUE, skip = 1)
 
