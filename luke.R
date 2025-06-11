@@ -71,13 +71,13 @@ Welzijn_averages <- Welzijn.goed %>%
 
 #Check if the columns in Welzijn and Welzijn_averages are the same
 
-setdiff(names(Welzijn.goed), names(Welzijn_averages))
+setdiff(names(Welzijn_goed), names(Welzijn_averages))
 
-sapply(Welzijn.goed[setdiff(names(Welzijn.goed), names(Welzijn_averages))], class)
+sapply(Welzijn_goed[setdiff(names(Welzijn_goed), names(Welzijn_averages))], class)
 
 #Change the columns in Welzijn.Goed that are not numeric to numeric
 
-Welzijn.goed <- Welzijn.goed %>%
+Welzijn_goed <- Welzijn_goed %>%
   mutate(across(all_of(c(
     "ScoreTevredenheidMetWerk_13", "Ontevreden_14", "NietTevredenNietOntevreden_15",
     "Tevreden_16", "ScoreTevredenheidMetReistijd_17", "Ontevreden_18",
