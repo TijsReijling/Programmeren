@@ -27,7 +27,7 @@ Levensverwachting <- read_csv("Levensverwachting.csv")
 
 write.csv(`Ervaren Gezondheid`, "Ervaren_Gezondheid.csv")
 
-write.csv(Welzijn.Goed, "Welzijn.goed.csv")
+write.csv(Welzijn.goed, "Welzijn.goed.csv")
 
 #Load Data
 library(readr)
@@ -55,10 +55,10 @@ library(dplyr)
 Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perioden),]
 
 #Isolate the rows that contain 2015JJ00, 2016JJ00, 2017JJ00, 2018JJ00 to get the data of the years 2015-2018 in Dataset Welzijn 
-Welzijn <- Welzijn[Welzijn$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
+Welzijn_goed <- Welzijn_goed[Welzijn_goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 
 #Isolate
-Welzijn_averages <- Welzijn %>%
+Welzijn_averages <- Welzijn.goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
     Perioden = "2015–2018",
@@ -71,13 +71,13 @@ Welzijn_averages <- Welzijn %>%
 
 #Check if the columns in Welzijn and Welzijn_averages are the same
 
-setdiff(names(Welzijn), names(Welzijn_averages))
+setdiff(names(Welzijn.goed), names(Welzijn_averages))
 
-sapply(Welzijn[setdiff(names(Welzijn), names(Welzijn_averages))], class)
+sapply(Welzijn.goed[setdiff(names(Welzijn.goed), names(Welzijn_averages))], class)
 
-#Change the columns in Welzijn that are not numeric to numeric
+#Change the columns in Welzijn.Goed that are not numeric to numeric
 
-Welzijn <- Welzijn %>%
+Welzijn.goed <- Welzijn.goed %>%
   mutate(across(all_of(c(
     "ScoreTevredenheidMetWerk_13", "Ontevreden_14", "NietTevredenNietOntevreden_15",
     "Tevreden_16", "ScoreTevredenheidMetReistijd_17", "Ontevreden_18",
@@ -87,7 +87,7 @@ Welzijn <- Welzijn %>%
 
 #Rerun the averaging process after converting the columns to numeric
 
-Welzijn_averages <- Welzijn %>%
+Welzijn_averages <- Welzijn.goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
     Perioden = "2015–2018",
@@ -98,7 +98,7 @@ Welzijn_averages <- Welzijn %>%
   relocate(ID, .before = Kenmerken)
 
 #Check if the columns in Welzijn and Welzijn_averages are the same again
-setdiff(names(Welzijn), names(Welzijn_averages))
+setdiff(names(Welzijn.goed), names(Welzijn_averages))
 
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv", col_names = TRUE, skip = 1)
 
