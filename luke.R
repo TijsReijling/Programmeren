@@ -10,12 +10,7 @@
 setwd("~/GitHub/Programmeren/data")
 
 library(readr)
-<<<<<<< HEAD
-Welzijn_goed <- read_delim("C:/Users/Luke Eising/Downloads/85542NED_UntypedDataSet_03062025_093918.csv", 
-                                delim = ";", escape_double = FALSE, trim_ws = TRUE)
-=======
 Welzijn_Goed <- read_csv("Welzijn.goed.csv")
->>>>>>> ab6c184638bcb067e337de536d367a4021cad33a
 
 library(readr)
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
@@ -35,7 +30,7 @@ write.csv(Welzijn_Goed, "Welzijn.goed.csv")
 
 
 Welzijn = read.csv("Welzijn.csv") 
-Levensverwachting = read_csv("Levensverwachting.csv")
+Levensverwachting = read.csv("Levensverwachting.csv")
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
 
 ###########################
@@ -107,4 +102,5 @@ Ervaren_Gezondheid <- Ervaren_Gezondheid[
 
 #Filter Ervaren_Gezondheid for the year 2016
 Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
+
 
