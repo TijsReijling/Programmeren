@@ -10,7 +10,7 @@
 setwd("~/GitHub/Programmeren/data")
 
 library(readr)
-Welzijn_Goed <- read_delim("C:/Users/Luke Eising/Downloads/85542NED_UntypedDataSet_03062025_093918.csv", 
+Welzijn_goed <- read_delim("C:/Users/Luke Eising/Downloads/85542NED_UntypedDataSet_03062025_093918.csv", 
                                 delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 library(readr)
@@ -25,7 +25,7 @@ write.csv(Levensverwachting, "Levensverwachting.csv")
 
 Levensverwachting <- read_csv("Levensverwachting.csv")
 
-write.csv(`Ervaren Gezondheid`, "Ervaren_Gezondheid.csv")
+write.csv(`Ervaren_Gezondheid`, "Ervaren_Gezondheid.csv")
 
 write.csv(Welzijn_goed, "Welzijn.goed.csv")
 
@@ -42,7 +42,7 @@ Levensverwachting <- read_delim("C:/Users/Luke Eising/Downloads/85445NED_Untyped
                                 delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 Welzijn = read.csv("Welzijn.csv") 
-Levensverwachting = read.csv("Levensverwachting.csv")
+Levensverwachting = read_csv("Levensverwachting.csv")
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
 
 ###########################
@@ -114,5 +114,4 @@ Ervaren_Gezondheid <- Ervaren_Gezondheid[
 
 #Filter Ervaren_Gezondheid for the year 2016
 Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
-
 
