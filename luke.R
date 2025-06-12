@@ -134,7 +134,7 @@ merged_data <- full_join(
   by = c("Kenmerken", "Perioden")
 )
 
-´
+
 
 
 #dit gekke ding gedaan om scale te veranderen.
