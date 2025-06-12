@@ -52,9 +52,7 @@ Welzijn_averages <- Welzijn_Goed %>%
     Perioden = "2015–2018",
     across(where(is.numeric), mean, na.rm = TRUE),
     .groups = "drop"
-  ) %>%
-  mutate(ID = row_number()) %>%
-  relocate(ID, .before = Kenmerken)
+  ) 
 
 
 #Check if the columns in Welzijn and Welzijn_averages are the same
@@ -81,9 +79,7 @@ Welzijn_averages <- Welzijn_Goed %>%
     Perioden = "2015–2018",
     across(where(is.numeric), mean, na.rm = TRUE),
     .groups = "drop"
-  ) %>%
-  mutate(ID = row_number()) %>%
-  relocate(ID, .before = Kenmerken)
+  ) 
 
 #Check if the columns in Welzijn and Welzijn_averages are the same again
 setdiff(names(Welzijn_Goed), names(Welzijn_averages))
