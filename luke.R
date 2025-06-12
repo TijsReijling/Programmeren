@@ -103,4 +103,4 @@ Ervaren_Gezondheid <- Ervaren_Gezondheid[
 #Filter Ervaren_Gezondheid for the year 2016
 Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
 
-
+#
