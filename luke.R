@@ -108,74 +108,29 @@ Welzijn_averages_2016 <- Welzijn_averages %>%
   filter(Marges == "MW00000", Perioden == "2015–2018") %>%
   mutate(Perioden = "2016")
 
-#full_join()
+#full_join(
+# Zorg dat de kolomnamen gelijk zijn
+Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
+  rename(Kenmerken = InkomenEnWelvaart)  # pas aan als dit de koppelsleutel is
 
+# Voer de merge uit op 'Kenmerken' en 'Perioden'
+merged_data <- full_join(
+  Levensverwachting_2016_renamed,
+  Welzijn_averages_2016,
+  by = c("Kenmerken", "Perioden")
+)
 
+# Transform everything into numerics
+Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
+  mutate(Kenmerken = as.character(Kenmerken))
 
+Welzijn_averages_2016 <- Welzijn_averages_2016 %>%
+  mutate(Kenmerken = as.character(Kenmerken))
 
+#join them together into merged_data
+merged_data <- full_join(
+  Levensverwachting_2016_renamed,
+  Welzijn_averages_2016,
+  by = c("Kenmerken", "Perioden")
+)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Making a graph showing development in "ervaren gezondheid" in de gemeenten
-#Amsterdam en Rotterdam over de jaren: 2012, 2016, 2020
-
-#dit gekke ding gedaan om scale te veranderen.
-Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
-  as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
-
-
-ggplot(Ervaren_Gezondheid, 
-       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
-           colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
-  geom_line(size = 1.5) +
-  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
-            colour = "black", 
-            vjust = -1,
-            show.legend = F) +
-  geom_point(colour = "black", size = 2.5, show.legend = F) +
-  
-  scale_colour_manual(values = c("#C41230", "#39B54A", "black")) +
-  scale_x_discrete(label = c(2012, 2016, 2020)) +
-  scale_y_continuous(
-    limits = c(65, 80),
-    breaks = seq(0, 100, by = 5)) +
-  
-  labs(x = "Jaar (2012, 2016, 2020)", 
-       y = "Ervaren gezondheid (% Goed of Zeer Goed)",
-       title = "Ervaren Gezondheid per Gemeente (2012-2020)",
-       colour = "Gemeente") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-#voeg lijn toe met gemiddelde van Nederland  
