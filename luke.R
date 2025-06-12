@@ -141,10 +141,6 @@ merged_data <- full_join(
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
   as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
 
-#even tidyverse installen zodat je ggplot hebt
-install.packages("tidyverse")
-library("tidyverse")
-
 #Making a graph showing development in "ervaren gezondheid" in de gemeenten
 #Amsterdam en Rotterdam over de jaren: 2012, 2016, 2020
 ggplot(Ervaren_Gezondheid, 
