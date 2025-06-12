@@ -134,10 +134,10 @@ merged_data <- full_join(
   by = c("Kenmerken", "Perioden")
 )
 
-´
 
 
-#dit gekke ding gedaan om scale te veranderen.
+
+#dit gekke ding gedaan om scale te kunnen veranderen.
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
   as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
 
