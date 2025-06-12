@@ -19,17 +19,17 @@ library(readr)
 Levensverwachting <- read_csv("Levensverwachting.csv")
 
 #References
-write.csv(Levensverwachting, "Levensverwachting.csv")
+##write.csv(Levensverwachting, "Levensverwachting.csv")
 
-Levensverwachting <- read_csv("Levensverwachting.csv")
+##Levensverwachting <- read_csv("Levensverwachting.csv")
 
-write.csv(`Ervaren_Gezondheid`, "Ervaren_Gezondheid.csv")
+##write.csv(`Ervaren_Gezondheid`, "Ervaren_Gezondheid.csv")
 
-write.csv(Welzijn_Goed, "Welzijn.goed.csv")
+##write.csv(Welzijn_Goed, "Welzijn.goed.csv")
 
 
 
-Welzijn = read.csv("Welzijn.csv") 
+Welzijn_Goed = read.csv("Welzijn.goed.csv") 
 Levensverwachting = read.csv("Levensverwachting.csv")
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
 
@@ -88,7 +88,7 @@ Welzijn_averages <- Welzijn_Goed %>%
 #Check if the columns in Welzijn and Welzijn_averages are the same again
 setdiff(names(Welzijn_Goed), names(Welzijn_averages))
 
-Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv", col_names = TRUE, skip = 1)
+Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv", col_names = TRUE,)
 
 #Isolate the rows with the averages of gemeenten 'Amsterdam' & 'Rotterdam'
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
@@ -103,4 +103,13 @@ Ervaren_Gezondheid <- Ervaren_Gezondheid[
 #Filter Ervaren_Gezondheid for the year 2016
 Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
 
-#
+#Isolate only the relevant absolute value of the year 2016 from the Levensverwachting dataset
+Levensverwachting_2016 <- Levensverwachting %>%
+  filter(Marges == "MW00000", Perioden == "2015G400") %>%
+  mutate(Perioden = "2016")
+#Isolate only the relevant absolute value of the year 2016 from the Welzijn_averages dataset
+Welzijn_averages_2016 <- Welzijn_averages %>%
+  filter(Marges == "MW00000", Perioden == "2015–2018") %>%
+  mutate(Perioden = "2016")
+
+#full_join()
