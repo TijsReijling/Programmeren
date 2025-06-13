@@ -108,10 +108,18 @@ Welzijn_averages_2016 <- Welzijn_averages %>%
   filter(Marges == "MW00000", Perioden == "2015–2018") %>%
   mutate(Perioden = "2016")
 
-#full_join(
+# ...existing code...
+
 # Zorg dat de kolomnamen gelijk zijn
 Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
   rename(Kenmerken = InkomenEnWelvaart)  # pas aan als dit de koppelsleutel is
+
+# Zet 'Kenmerken' in beide dataframes om naar character
+Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
+  mutate(Kenmerken = as.character(Kenmerken))
+
+Welzijn_averages_2016 <- Welzijn_averages_2016 %>%
+  mutate(Kenmerken = as.character(Kenmerken))
 
 # Voer de merge uit op 'Kenmerken' en 'Perioden'
 merged_data <- full_join(
@@ -120,19 +128,7 @@ merged_data <- full_join(
   by = c("Kenmerken", "Perioden")
 )
 
-# Transform everything into numerics
-Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
-  mutate(Kenmerken = as.character(Kenmerken))
-
-Welzijn_averages_2016 <- Welzijn_averages_2016 %>%
-  mutate(Kenmerken = as.character(Kenmerken))
-
-#join them together into merged_data
-merged_data <- full_join(
-  Levensverwachting_2016_renamed,
-  Welzijn_averages_2016,
-  by = c("Kenmerken", "Perioden")
-)
+# ...existing code...
 
 
 
