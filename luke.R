@@ -171,3 +171,88 @@ ggplot(Ervaren_Gezondheid,
   theme_minimal() +
   theme(legend.position = "bottom")
 #voeg lijn toe met gemiddelde van Nederland  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Create a new dataset for the year 2016, with only a couple of values kept
+Welzijn_index_2016 <- Welzijn_averages_2016 %>%
+  select(
+    Kenmerken, Marges, Perioden,
+    ScoreGeluk_1,
+    ScoreTevredenheidMetHetLeven_5,
+    ScoreTevredenheidMetWerk_13,
+    ScoreTevredenheidDagelijkseBezigheden_21,
+    ScoreTevredenheidMetLichGezondheid_25,
+    ScoreTevredenheidPsychischeGezondheid_29,
+    ScoreTevredenheidMetSociaalLeven_57
+  )
+
+# With these values we can create a new column called WelzijnIndex 
+Welzijn_index_2016 <- Welzijn_index_2016 %>%
+  mutate(
+    WelzijnIndex = rowMeans(select(., 
+                                   ScoreGeluk_1,
+                                   ScoreTevredenheidMetHetLeven_5,
+                                   ScoreTevredenheidMetWerk_13,
+                                   ScoreTevredenheidDagelijkseBezigheden_21,
+                                   ScoreTevredenheidMetLichGezondheid_25,
+                                   ScoreTevredenheidPsychischeGezondheid_29,
+                                   ScoreTevredenheidMetSociaalLeven_57
+    ), na.rm = TRUE)
+  )
+
+# Move New column WelzijnIndex to the front and delete the old columns
+Welzijn_index_2016 <- Welzijn_index_2016 %>%
+  select(Kenmerken, Marges, Perioden, WelzijnIndex)
+
+# Filter the dataset to only include rows with specific educational levels
+Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
+  filter(Kenmerken %in% c(
+    "2018710",  # Basisonderwijs
+    "2018720",  # Vmbo, havo-, vwo-onderbouw, mbo1
+    "2018750",  # Havo, vwo, mbo2-4
+    "2018800",  # Hbo-, wo-bachelor
+    "2018810"   # Hbo-, wo-master, doctor
+  ))
+
+# Rename the 'Kenmerken' column to a new 'Opleidingsniveau' column for clarity
+Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
+  mutate(
+    Opleidingsniveau = case_when(
+      Kenmerken == "2018710" ~ "Basisonderwijs",
+      Kenmerken == "2018720" ~ "Vmbo, havo-, vwo-onderbouw, mbo1",
+      Kenmerken == "2018750" ~ "Havo, vwo, mbo2-4",
+      Kenmerken == "2018800" ~ "Hbo-, wo-bachelor",
+      Kenmerken == "2018810" ~ "Hbo-, wo-master, doctor",
+      TRUE ~ NA_character_
+    )
+  )
+
+# Remove the old 'Kenmerken' column and rearrange the columns
+Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
+  select(-Kenmerken) %>%
+  relocate(Opleidingsniveau, .before = everything())
