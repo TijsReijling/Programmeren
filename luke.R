@@ -257,3 +257,44 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Kenmerken) %>%
   relocate(Opleidingsniveau, .before = everything())
 
+# Filter the Levensverwachting dataset for the relevant characteristics (3000 and 4000)
+Levensverwachting_geslacht <- Levensverwachting_2016_renamed %>%
+  filter(Geslacht %in% c(3000, 4000))
+
+# Rename 3000 and 4000 to "Mannen" & "Vrouwen" respectively
+Levensverwachting_geslacht <- Levensverwachting_geslacht %>%
+  mutate(
+    Geslacht = case_when(
+      Geslacht == 3000 ~ "Mannen",
+      Geslacht == 4000 ~ "Vrouwen"
+    ))
+
+# Take the average life expectancy of Men & Women
+Levensverwachting_geslacht_gemiddeld <- Levensverwachting_geslacht %>%
+  group_by(Geslacht) %>%
+  summarise(
+    Jaar = "2016",
+    Levensverwachting = mean(Levensverwachting_1, na.rm = TRUE)
+  )
+# Note: The value for life expectancy may seem 'low' because it reflects the
+# number of years a person in this age group is still expected to live.
+# For example, someone in the 80-year age group has have a life expectancy of around 8 years.
+
+# Create a new dataset for to showcase the WelzijnIndex for both 'Men' & 'Women'
+# Give it the same form as Levensverwachting_geslacht_gemiddeld
+Welzijn_naar_geslacht <- Welzijn_index_2016 %>%
+  filter(Kenmerken %in% c(3000, 4000)) %>%
+  mutate(
+    Geslacht = case_when(
+      Kenmerken == 3000 ~ "Mannen",
+      Kenmerken == 4000 ~ "Vrouwen"
+    )
+  ) %>%
+  select(Geslacht, Jaar = Perioden, WelzijnIndex)
+
+# Merge the two datasets into one 
+Ultimate_dataset_of_doom_hell_and_destruction <- full_join(
+  Levensverwachting_geslacht_gemiddeld,
+  Welzijn_naar_geslacht,
+  by = c("Geslacht", "Jaar")
+)
