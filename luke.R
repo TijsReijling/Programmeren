@@ -256,3 +256,4 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Kenmerken) %>%
   relocate(Opleidingsniveau, .before = everything())
+
