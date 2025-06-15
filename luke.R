@@ -303,3 +303,182 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   filter(Marges == "MW00000") %>%
   select(-Marges) %>%
   rename(Jaar = Perioden)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Plot: Education level vs. Welfare Index
+# Ensure the education level order is correct (basic to advanced)
+Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
+  Welzijn_naar_opleidingsniveau$Opleidingsniveau,
+  levels = c(
+    "Basisonderwijs",
+    "Vmbo, havo-, vwo-onderbouw, mbo1",
+    "Havo, vwo, mbo2-4",
+    "Hbo-, wo-bachelor",
+    "Hbo-, wo-master, doctor"
+  )
+)
+
+ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex, fill = Opleidingsniveau)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(
+    aes(label = round(WelzijnIndex, 3)),   # 3 decimals
+    vjust = -0.4,
+    size = 4
+  ) +
+  scale_y_continuous(
+    limits = c(0, 10),
+    breaks = seq(0, 10, 1)
+  ) +
+  labs(
+    title = "WelzijnIndex per Opleidingsniveau (Nederland, 2016)",
+    x = "Opleidingsniveau",
+    y = "WelzijnIndex (1-10 schaal)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 30, hjust = 1),
+    legend.position = "none"
+  )
