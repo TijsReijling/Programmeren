@@ -298,3 +298,8 @@ Ultimate_dataset_of_doom_hell_and_destruction <- full_join(
   Welzijn_naar_geslacht,
   by = c("Geslacht", "Jaar")
 )
+# Take the marges out of Welzijn_naar_opleidingsniveau and change the perioden to the year
+Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
+  filter(Marges == "MW00000") %>%
+  select(-Marges) %>%
+  rename(Jaar = Perioden)
