@@ -398,87 +398,51 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
 
 
 
+# Clean Levensverwachting_2016_renamed dataset a bit more in a specific direction for another plot
+# Isolate baby's born in 2016, with age 0
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
+  filter(LeeftijdOp31December == "10010", Geslacht == "T001038") %>%
+  mutate(Leeftijd = 0)
 
+# Clean up some non-relevant columns
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
+  select(-Marges, -Geslacht, -LeeftijdOp31December)
 
+# Change Perioden to 'Jaar'
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
+  rename(Jaar = Perioden)
 
+# Filter only the 'kenmerken' that indicate the Welfare quintiles
+welvaart_codes <- c(2021770, 2021780, 2021790, 2021800, 2021810)
 
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
+  filter(Kenmerken %in% welvaart_codes)
 
+# Create a new column for Welfare Quintiles with their respective labels
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
+  arrange(Kenmerken) %>%
+  mutate(WelvaartQuintiles = c("1st quintile", "2nd quintile", "3rd quintile", "4th quintile", "5th quintile"))
 
+# Put the columns back in the order that is preferred
+Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
+  select(Leeftijd, Jaar, WelvaartQuintiles, Levensverwachting_1)
 
+# Convert the Levensverwachting_1 column to numeric (Otherwise there will be an error)
+Levensverwachting_2016_renamed_baby$Levensverwachting_1 <- as.numeric(as.character(Levensverwachting_2016_renamed_baby$Levensverwachting_1))
+str(Levensverwachting_2016_renamed_baby)
 
+library(ggplot2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Plot: Education level vs. Welfare Index
-# Ensure the education level order is correct (basic to advanced)
-Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
-  Welzijn_naar_opleidingsniveau$Opleidingsniveau,
-  levels = c(
-    "Basisonderwijs",
-    "Vmbo, havo-, vwo-onderbouw, mbo1",
-    "Havo, vwo, mbo2-4",
-    "Hbo-, wo-bachelor",
-    "Hbo-, wo-master, doctor"
-  )
-)
-
-ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex, fill = Opleidingsniveau)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  geom_text(
-    aes(label = round(WelzijnIndex, 3)),   # 3 decimals
-    vjust = -0.4,
-    size = 4
-  ) +
-  scale_y_continuous(
-    limits = c(0, 10),
-    breaks = seq(0, 10, 1)
-  ) +
+ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
   labs(
-    title = "WelzijnIndex per Opleidingsniveau (Nederland, 2016)",
-    x = "Opleidingsniveau",
-    y = "WelzijnIndex (1-10 schaal)"
+    title = "Levensverwachting bij geboorte per welvaartquintiel (2016)",
+    x = "Welvaartquintiel",
+    y = "Levensverwachting (in years)"
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 30, hjust = 1),
-    legend.position = "none"
+    axis.title.y = element_text(margin = margin(r = 10)),
+    axis.title.x = element_text(margin = margin(t = 10))
   )
