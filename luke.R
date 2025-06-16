@@ -304,6 +304,73 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Marges) %>%
   rename(Jaar = Perioden)
 
+# Set working directory (pas dit aan indien nodig)
+setwd("~/GitHub/Programmeren/data")
+
+# Vereiste packages automatisch installeren en laden
+packages <- c("sf", "dplyr", "ggplot2", "readr", "tmap", "stringr")
+installed <- rownames(installed.packages())
+for (pkg in packages) {
+  if (!pkg %in% installed) install.packages(pkg)
+}
+lapply(packages, library, character.only = TRUE)
+
+# Laad de gemeentegrenzen van 2020 als GeoJSON via PDOK
+gemeente_shape <- st_read(
+  "https://service.pdok.nl/cbs/gebiedsindelingen/2020/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json",
+  quiet = TRUE
+)
+
+# Selecteer alleen relevante kolommen en hernoem
+gemeente_shape <- gemeente_shape %>%
+  select(statcode, statnaam, geometry) %>%
+  rename(GM_CODE = statcode, GM_NAAM = statnaam)
+
+# Laad je CSV data (controleer pad en encoding indien nodig)
+data <- read_csv("GemeentesJuist.csv", locale = locale(encoding = "UTF-8"))
+
+# Filter alleen gemeenten uit de data
+gemeente_data <- data %>%
+  filter(str_to_lower(SoortRegio_2) == "gemeente") %>%
+  select(Gemeentenaam_1, ErvarenGezondheidGoedZeerGoed_4)
+
+# Namen normaliseren voor de join
+gemeente_shape$GM_NAAM <- str_to_lower(gemeente_shape$GM_NAAM)
+gemeente_data$Gemeentenaam_1 <- str_to_lower(gemeente_data$Gemeentenaam_1)
+
+# Join shapefile met gezondheidsdata
+kaart_data <- gemeente_shape %>%
+  left_join(gemeente_data, by = c("GM_NAAM" = "Gemeentenaam_1"))
+
+# Controle op niet-gematchte gemeenten
+na_count <- sum(is.na(kaart_data$ErvarenGezondheidGoedZeerGoed_4))
+cat("Aantal gemeenten zonder data: ", na_count, "\n")
+
+# Vereenvoudig geometrie voor sneller plotten (optioneel)
+kaart_data <- st_simplify(kaart_data, dTolerance = 100)
+
+# Zet tmap in plotmodus
+tmap_mode("plot")  # "view" = interactief, "plot" = statisch
+
+# Maak de heatmapkaart
+kaart_plot <- tm_shape(kaart_data) +
+  tm_fill("ErvarenGezondheidGoedZeerGoed_4",
+          palette = "Blues",
+          title = "Perceived Health per Municipality (%)",
+          textNA = "No data") +
+  tm_borders() +
+  tm_layout(
+    title = "Perceived Health per Municipality in 2020",
+    title.position = c("center", "top"),
+    inner.margins = c(0.12, 0.02, 0.10, 0.02),
+    title.size = 1.5,
+    title.color = "black",
+    legend.outside = TRUE
+  )
+
+# Print de kaart
+print(kaart_plot)
+
 
 
 
