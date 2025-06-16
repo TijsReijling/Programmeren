@@ -620,20 +620,20 @@ ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
     values = c("Mannen" = "#4B9CD3", "Vrouwen" = "#E06F8B"),
     labels = c("Mannen" = "Men", "Vrouwen" = "Women")
   ) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +  # <- extra ruimte boven balken
   labs(
     title = "Difference in life expectancy and well-being: Men vs Women",
     x = "",
     y = "Value"
   ) +
-  theme_minimal(base_size = 16) +
+  theme_minimal(base_size = 10) +
   theme(
-    plot.title = element_text(face = "bold", hjust = 0.5)
+    plot.title = element_text(
+      face = "bold",
+      hjust = 0.4,
+      margin = margin(b = 15)  # <- ruimte onder titel
+    )
   )
-
-
-
-
-
 
 
 
