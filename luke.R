@@ -304,9 +304,6 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Marges) %>%
   rename(Jaar = Perioden)
 
-# Set working directory (pas dit aan indien nodig)
-setwd("~/GitHub/Programmeren/data")
-
 # Vereiste packages automatisch installeren en laden
 packages <- c("sf", "dplyr", "ggplot2", "readr", "tmap", "stringr")
 installed <- rownames(installed.packages())
@@ -580,3 +577,55 @@ ggplot(Ervaren_Gezondheid,
   theme(legend.position = "bottom")
 
 # Number 2
+
+
+
+
+
+
+
+
+
+
+
+# Prepare data
+plot_data <- Ultimate_dataset_of_doom_hell_and_destruction %>%
+  select(Geslacht, Levensverwachting, WelzijnIndex) %>%
+  pivot_longer(
+    cols = c("Levensverwachting", "WelzijnIndex"),
+    names_to = "Metric",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Metric = recode(Metric,
+                    "Levensverwachting" = "Life Expectancy",
+                    "WelzijnIndex" = "Well-Being Index"
+    ),
+    Label = round(Value, 2)
+  )
+
+plot_data$Geslacht <- factor(plot_data$Geslacht, levels = c("Mannen", "Vrouwen"))
+
+ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
+  geom_col(position = position_dodge(width = 0.9), width = 0.9) +
+  geom_text(
+    aes(label = Label),
+    position = position_dodge(width = 0.9),
+    vjust = -0.5,
+    color = "black",
+    size = 5
+  ) +
+  scale_fill_manual(
+    name = "Gender",
+    values = c("Mannen" = "#4B9CD3", "Vrouwen" = "#E06F8B"),
+    labels = c("Mannen" = "Men", "Vrouwen" = "Women")
+  ) +
+  labs(
+    title = "Difference in life expectancy and well-being: Men vs Women",
+    x = "",
+    y = "Value"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5)
+  )
