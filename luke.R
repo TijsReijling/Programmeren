@@ -505,6 +505,18 @@ Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
   ) %>%
   select(Opleidingsniveau, Jaar, WelzijnIndex)
 
+## Next plot
+Welzijn_temporal_visualization$Opleidingsniveau <- factor(
+  Welzijn_temporal_visualization$Opleidingsniveau,
+  levels = c(
+    "Hbo-, wo-master, doctor",
+    "Hbo-, wo-bachelor",
+    "Havo, vwo, mbo2-4",
+    "Vmbo, havo-, vwo-onderbouw, mbo1",
+    "Basisonderwijs"
+  )
+)
+
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
