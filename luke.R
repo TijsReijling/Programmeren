@@ -371,99 +371,6 @@ kaart_plot <- tm_shape(kaart_data) +
 # Print de kaart
 print(kaart_plot)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Clean Levensverwachting_2016_renamed dataset a bit more in a specific direction for another plot
 # Isolate baby's born in 2016, with age 0
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
@@ -548,15 +455,6 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
     axis.text.x = element_text(angle = 30, hjust = 1, size = 7),
     legend.position = "none"
   )
-
-
-
-
-
-
-
-
-
 
 
 
