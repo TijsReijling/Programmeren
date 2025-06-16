@@ -542,3 +542,41 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     axis.title.x = element_text(margin = margin(t = 10)),
     axis.title.y = element_text(margin = margin(r = 10))
   )
+
+# Create the 'two temporal visualizations with an event analysis weaved in'-plot
+# number 1
+ggplot(Ervaren_Gezondheid, 
+       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
+           colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
+  
+  geom_line(size = 1.5) +
+  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
+            colour = "black", vjust = -1, show.legend = FALSE) +
+  geom_point(colour = "black", size = 2.5, show.legend = FALSE) +
+  
+  # Rotterdam event (2016)
+  geom_segment(aes(x = 2, xend = 2, y = 68.4 - 1.7, yend = 68.4 + 2.1), 
+               color = "black", linewidth = 0.4) +
+  annotate("text", x = 2, y = 69.9 - 3.3, label = "Rotterdam Vitaal en Healthy", 
+           color = "black", angle = 0, vjust = 1, size = 3) +
+  
+  # Amsterdam event (tussen 2016 en 2020 = x = 2.33)
+  geom_segment(aes(x = 2.33, xend = 2.33, y = 73.8 - 0.4, yend = 73.8 + 2.8), 
+               color = "black", linewidth = 0.4) +
+  annotate("text", x = 2.25, y = 79 - 1.3, label = "Amsterdam Vitaal & Gezond", 
+           color = "black", angle = 0, vjust = 1, size = 3) +
+  
+  scale_colour_manual(values = c("Amsterdam" = "#C41230", "Rotterdam" = "#39B54A")) +
+  scale_x_discrete(label = c(2012, 2016, 2020)) +
+  scale_y_continuous(limits = c(65, 80), breaks = seq(0, 100, 5)) +
+  
+  labs(
+    x = "Year (2012, 2016, 2020)", 
+    y = "Perceived Health (% Good or Very Good)",
+    title = "Perceived Health per Municipality (2012-2020)",
+    colour = "Municipality"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# Number 2
