@@ -164,10 +164,10 @@ ggplot(Ervaren_Gezondheid,
     limits = c(65, 80),
     breaks = seq(0, 100, by = 5)) +
   
-  labs(x = "Jaar (2012, 2016, 2020)", 
-       y = "Ervaren gezondheid (% Goed of Zeer Goed)",
-       title = "Ervaren Gezondheid per Gemeente (2012-2020)",
-       colour = "Gemeente") +
+  labs(x = "Year (2012, 2016, 2020)", 
+       y = "Perceived Health (% Good or Very Good)",
+       title = "Perceived Health per Municipality (2012-2020)",
+       colour = "Municipality") +
   theme_minimal() +
   theme(legend.position = "bottom")
 #voeg lijn toe met gemiddelde van Nederland  
@@ -397,7 +397,6 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
 
 
 
-
 # Clean Levensverwachting_2016_renamed dataset a bit more in a specific direction for another plot
 # Isolate baby's born in 2016, with age 0
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
@@ -435,11 +434,11 @@ library(ggplot2)
 
 ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
   geom_col(fill = "steelblue") +
-  coord_flip() +
+  coord_flip(ylim = c(60, NA)) +  # <<--- set limit here
   labs(
-    title = "Levensverwachting bij geboorte per welvaartquintiel (2016)",
-    x = "Welvaartquintiel",
-    y = "Levensverwachting (in years)"
+    title = "Life expectancy at birth per Total Wealth Quintile (2016)",
+    x = "Total Wealth Quintile",
+    y = "Life expectancy (in years)"
   ) +
   theme_minimal() +
   theme(
@@ -473,12 +472,12 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
     breaks = seq(0, 10, 1)
   ) +
   labs(
-    title = "WelzijnIndex per Opleidingsniveau (Nederland, 2016)",
-    x = "Opleidingsniveau",
-    y = "WelzijnIndex (1-10 schaal)"
+    title = "Welfare Index per Level of education (The Netherlands, 2016)",
+    x = "Education level",
+    y = "Welfare Index (scale of 1-10)"
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 30, hjust = 1),
+    axis.text.x = element_text(angle = 30, hjust = 1, size = 7),
     legend.position = "none"
   )
