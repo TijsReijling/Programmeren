@@ -641,10 +641,15 @@ ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
 ##############################
 ###de correlation map maken###
 ##############################
-gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
-Inkomen_per_gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Inkomen_gemeente.csv")
-Ervaren_gezondheid_wijk <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Ervarengezondheid_Wijk&Buurt.csv")
+library(readr)
+library(cbsodataR)
+library(tidyverse)
+library(sf)
 
+Ervaren_gezondheid_wijk <- read_delim("Ervarengezondheid_Wijk&Buurt.csv", delim = ";")
+Inkomen_per_gemeente <- read_delim("Inkomen_gemeente.csv", delim = ";")
+Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv", delim = ";")
+gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 
 #Overbodige info weg filteren
 Inkomen_per_wijk <- Inkomen_per_gemeente
@@ -710,15 +715,6 @@ ggplot(gemeente_wijk_mapdata) +
 ######MAKING THE plot SHOWING CORRELATION WEALTH AND HEALTH######
 ################################################################
 
-library(cbsodataR)
-library(tidyverse)
-library(sf)
-
-gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
-
-Inkomen_per_gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Inkomen_gemeente.csv")
-Levensverwachting_Gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Levensverwacht_Gemeente_Wijk&Buurt.csv")
-
 #statcode weg filteren bij Inkomen_per_gemeenten
 Inkomen_per_gemeente <- filter(Inkomen_per_gemeente, Wijkcode == "Totaal")
 Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Perioden == "2019G400") #2019G400 = gemiddelde van 2019/2022
@@ -747,5 +743,4 @@ library(ggplot2)
 ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  labs(x = "Income", y = "Life Expectancy") 
-  
+  labs(x = "Income", y = "Life Expectancy")
