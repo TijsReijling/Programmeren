@@ -629,3 +629,123 @@ ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
   theme(
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
+
+
+
+
+
+
+
+
+##############################
+###de correlation map maken###
+##############################
+gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
+Inkomen_per_gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Inkomen_gemeente.csv")
+Ervaren_gezondheid_wijk <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Ervarengezondheid_Wijk&Buurt.csv")
+
+
+#Overbodige info weg filteren
+Inkomen_per_wijk <- Inkomen_per_gemeente
+Inkomen_per_wijk <- Inkomen_per_wijk %>%
+  filter(Regionaam != "Totaal")
+Inkomen_per_wijk <- Inkomen_per_wijk %>%
+  filter(Wijkcode != "Totaal")
+
+
+
+Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
+  rename(Wijkcode = Codering_3, statnaam = Gemeentenaam_1)
+
+Ervaren_gezondheid_wijk$SoortRegio_2 <- trimws(Ervaren_gezondheid_wijk$SoortRegio_2)
+Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
+  mutate(Wijkcode = trimws(toupper(Wijkcode)))
+Ervaren_gezondheid_wijk <- filter(Ervaren_gezondheid_wijk, SoortRegio_2 %in% c("Gemeente", "Wijk"))
+
+Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
+  filter(SoortRegio_2 == "Wijk")
+
+#creating new data set for calculating and mapping later on
+# Gezondheid en welvaart data mergen
+gemeente_wijk_data <- inner_join(
+  Inkomen_per_wijk, Ervaren_gezondheid_wijk, by = "Wijkcode") %>%
+  select(statnaam, Regionaam, Wijkcode, Gemiddeld, ErvarenGezondheidGoedZeerGoed_4)
+
+gemeente_wijk_data$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(gsub(",", ".", gemeente_wijk_data$ErvarenGezondheidGoedZeerGoed_4))
+gemeente_wijk_data$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_wijk_data$Gemiddeld)) #commas omzetten naar punten
+
+##making the correlation variable per gemeente
+library(dplyr)
+gemeente_cor <- gemeente_wijk_data %>%
+  group_by(statnaam) %>%
+  filter(n() >= 3) %>%
+  summarise(
+    correlation = if (sum(complete.cases(as.numeric(Gemiddeld, ErvarenGezondheidGoedZeerGoed_4))) > 1)
+    {cor(as.numeric(Gemiddeld), as.numeric(ErvarenGezondheidGoedZeerGoed_4), use = "complete.obs")} 
+    else {NA_real_})
+
+
+#trimming white spaces so I can add the geometry for the heat map
+gemeentegrenzen <- gemeentegrenzen %>%
+  mutate(statnaam = tolower(trimws(statnaam)))
+gemeente_cor <- gemeente_cor %>%
+  mutate(statnaam = tolower(trimws(statnaam)))
+
+gemeente_wijk_mapdata <- gemeentegrenzen %>%
+  left_join(gemeente_cor, by = "statnaam")
+
+
+#plotting the heat map
+ggplot(gemeente_wijk_mapdata) +
+  geom_sf(aes(fill = correlation)) + 
+  theme_minimal() +
+  scale_fill_gradient(high = "purple", low = "orange", 
+                      name = "Correlation 'income & health'") +
+  theme(legend.position = "left")
+
+
+
+################################################################
+######MAKING THE plot SHOWING CORRELATION WEALTH AND HEALTH######
+################################################################
+
+library(cbsodataR)
+library(tidyverse)
+library(sf)
+
+gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
+
+Inkomen_per_gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Inkomen_gemeente.csv")
+Levensverwachting_Gemeente <- read.csv2("C:/Users/basvw/OneDrive/Documents/T4-G2/Levensverwacht_Gemeente_Wijk&Buurt.csv")
+
+#statcode weg filteren bij Inkomen_per_gemeenten
+Inkomen_per_gemeente <- filter(Inkomen_per_gemeente, Wijkcode == "Totaal")
+Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Perioden == "2019G400") #2019G400 = gemiddelde van 2019/2022
+Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Geslacht == "T001038") #T001038 = Man + Vrouw
+Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Marges == "MW00000") #MW00000 = Waarde
+Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Leeftijd == "10010") #10010 = 0 jarige
+
+Levensverwachting_Gemeente <- Levensverwachting_Gemeente %>%
+  filter(RegioS %in% Inkomen_per_gemeente$Gemeentecode)
+
+
+# Gezondheid en welvaart data mergen
+gemeente_data <- left_join(Inkomen_per_gemeente, Levensverwachting_Gemeente, by = c("Gemeentecode" = "RegioS"))
+
+# de gemengde data koppelen aan de map
+gemeente_mapdata <- left_join(gemeentegrenzen, gemeente_data, by = c("statcode" = "Gemeentecode"))
+
+####### De covariance uitrekenen voor elke gemeente ######
+gemeente_mapdata$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_mapdata$Gemiddeld)) #commas omzetten naar punten
+gemeente_mapdata$Levensverwachting_1 <- as.numeric(gemeente_mapdata$Levensverwachting_1)
+
+cor(gemeente_mapdata$Levensverwachting_1, gemeente_mapdata$Gemiddeld, use = "complete.obs") # +1 = perfect positive relation, 0 = no correlation, -1 = perfect negative correlation                                                                      
+
+
+library(ggplot2)
+ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x = "Income", y = "Life Expectancy") 
+  
