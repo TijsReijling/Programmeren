@@ -481,3 +481,87 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
     axis.text.x = element_text(angle = 30, hjust = 1, size = 7),
     legend.position = "none"
   )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+library(dplyr)
+
+# Specificeer de juiste Kenmerken (opleidingsniveaugroepen)
+opleidingskenmerken <- c(2018710, 2018720, 2018750, 2018800, 2018810)
+
+# Maak nieuwe dataset
+Welzijn_temporal_visualization <- Welzijn_Goed %>%
+  # Filter op juiste Kenmerken én Marges
+  filter(Kenmerken %in% opleidingskenmerken, Marges == "MW00000") %>%
+  
+  # Voeg kolom Jaar toe (bijv. "2016JJ00" → 2016)
+  mutate(Jaar = as.numeric(substr(Perioden, 1, 4))) %>%
+  
+  # Maak WelzijnIndex als gemiddelde van de geselecteerde kolommen
+  rowwise() %>%
+  mutate(WelzijnIndex = mean(c_across(c(
+    ScoreGeluk_1,
+    ScoreTevredenheidMetHetLeven_5,
+    ScoreTevredenheidMetWerk_13,
+    ScoreTevredenheidDagelijkseBezigheden_21,
+    ScoreTevredenheidMetLichGezondheid_25,
+    ScoreTevredenheidPsychischeGezondheid_29,
+    ScoreTevredenheidMetSociaalLeven_57
+  )), na.rm = TRUE)) %>%
+  ungroup() %>%
+  
+  # Selecteer alleen relevante kolommen
+  select(Kenmerken, Jaar, WelzijnIndex)
+
+Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
+  mutate(
+    Opleidingsniveau = case_when(
+      Kenmerken == 2018710 ~ "Basisonderwijs",
+      Kenmerken == 2018720 ~ "Vmbo, havo-, vwo-onderbouw, mbo1",
+      Kenmerken == 2018750 ~ "Havo, vwo, mbo2-4",
+      Kenmerken == 2018800 ~ "Hbo-, wo-bachelor",
+      Kenmerken == 2018810 ~ "Hbo-, wo-master, doctor",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  select(Opleidingsniveau, Jaar, WelzijnIndex)
+
+ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  scale_x_continuous(breaks = 2015:2018) +
+  scale_color_manual(
+    values = c(
+      "Basisonderwijs" = "#F8766D",
+      "Vmbo, havo-, vwo-onderbouw, mbo1" = "#C49A00",
+      "Havo, vwo, mbo2-4" = "#00BA38",
+      "Hbo-, wo-bachelor" = "#00BFC4",
+      "Hbo-, wo-master, doctor" = "#C77CFF"
+    )
+  ) +
+  labs(
+    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
+    x = "Year",
+    y = "Welfare Index",
+    color = "Education level"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 9, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
