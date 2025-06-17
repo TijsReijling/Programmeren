@@ -695,7 +695,7 @@ gemeente_cor <- gemeente_wijk_data %>%
 gemeentegrenzen <- gemeentegrenzen %>%
   mutate(statnaam = tolower(trimws(statnaam)))
 gemeente_cor <- gemeente_cor %>%
-  mutate(statnaam = tolower(trimws(statnaam)))
+  mutate(statnaam = tolower(trimws(statnaam))) #negative_cor = 30, NA = 49, positive cor = 263
 
 gemeente_wijk_mapdata <- gemeentegrenzen %>%
   left_join(gemeente_cor, by = "statnaam")
@@ -705,9 +705,13 @@ gemeente_wijk_mapdata <- gemeentegrenzen %>%
 ggplot(gemeente_wijk_mapdata) +
   geom_sf(aes(fill = correlation)) + 
   theme_minimal() +
-  scale_fill_gradient(high = "purple", low = "orange", 
-                      name = "Correlation 'income & health'") +
-  theme(legend.position = "left")
+  scale_fill_gradient2(high = "#6A0DAD", mid = "lightgrey", low = "#FFD700",
+                       limits = c(-1, 1),
+                       breaks = c(-1, -0.5, 0, 0.5, 1),
+                       name = "Correlation 'income & health'") +
+  theme(legend.position = "left") + 
+  labs(caption = "Grey areas = insufficient data") 
+
 
 
 
