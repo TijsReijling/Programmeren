@@ -25,7 +25,10 @@ setwd("~/GitHub/Programmeren/data")
 #install.packages("readr")
 #install.packages("ggplot2")
 
+################################
 ##### library all packages #####
+################################
+
 library(cbsodataR)
 library(sf)
 library(readr)
@@ -309,25 +312,25 @@ gemeente_data <- data %>%
   filter(str_to_lower(SoortRegio_2) == "gemeente") %>%
   select(Gemeentenaam_1, ErvarenGezondheidGoedZeerGoed_4)
 
-# Namen normaliseren voor de join
+#Normalize names for the join
 gemeente_shape$GM_NAAM <- str_to_lower(gemeente_shape$GM_NAAM)
 gemeente_data$Gemeentenaam_1 <- str_to_lower(gemeente_data$Gemeentenaam_1)
 
-# Join shapefile met gezondheidsdata
+# Join shapefile with health data
 kaart_data <- gemeente_shape %>%
   left_join(gemeente_data, by = c("GM_NAAM" = "Gemeentenaam_1"))
 
-# Controle op niet-gematchte gemeenten
+#Check for unmatched municipalities
 na_count <- sum(is.na(kaart_data$ErvarenGezondheidGoedZeerGoed_4))
 cat("Aantal gemeenten zonder data: ", na_count, "\n")
 
-# Vereenvoudig geometrie voor sneller plotten (optioneel)
+#Simplify geometry for faster plotting (optional)
 kaart_data <- st_simplify(kaart_data, dTolerance = 100)
 
-# Zet tmap in plotmodus
-tmap_mode("plot")  # "view" = interactief, "plot" = statisch
+#Set tmap to plot mode
+tmap_mode("plot")  # "view" = interactive, "plot" = static
 
-# Maak de heatmapkaart
+#Create the heatmap
 kaart_plot <- tm_shape(kaart_data) +
   tm_fill("ErvarenGezondheidGoedZeerGoed_4",
           palette = "Blues",
@@ -343,7 +346,7 @@ kaart_plot <- tm_shape(kaart_data) +
     legend.outside = TRUE
   )
 
-# Print de kaart
+#Print the map
 print(kaart_plot)
 
 # Clean Levensverwachting_2016_renamed dataset a bit more in a specific direction for another plot
@@ -352,35 +355,35 @@ Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
   filter(LeeftijdOp31December == "10010", Geslacht == "T001038") %>%
   mutate(Leeftijd = 0)
 
-# Clean up some non-relevant columns
+#Clean up some non-relevant columns
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   select(-Marges, -Geslacht, -LeeftijdOp31December)
 
-# Change Perioden to 'Jaar'
+#Change Perioden to 'Jaar'
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   rename(Jaar = Perioden)
 
-# Filter only the 'kenmerken' that indicate the Welfare quintiles
+#Filter only the 'kenmerken' that indicate the Welfare quintiles
 welvaart_codes <- c(2021770, 2021780, 2021790, 2021800, 2021810)
 
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   filter(Kenmerken %in% welvaart_codes)
 
-# Create a new column for Welfare Quintiles with their respective labels
+#Create a new column for Welfare Quintiles with their respective labels
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   arrange(Kenmerken) %>%
   mutate(WelvaartQuintiles = c("1st quintile", "2nd quintile", "3rd quintile", "4th quintile", "5th quintile"))
 
-# Put the columns back in the order that is preferred
+#Put the columns back in the order that is preferred
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   select(Leeftijd, Jaar, WelvaartQuintiles, Levensverwachting_1)
 
-# Convert the Levensverwachting_1 column to numeric (Otherwise there will be an error)
+#Convert the Levensverwachting_1 column to numeric (Otherwise there will be an error)
 Levensverwachting_2016_renamed_baby$Levensverwachting_1 <- as.numeric(as.character(Levensverwachting_2016_renamed_baby$Levensverwachting_1))
 str(Levensverwachting_2016_renamed_baby)
 
-library(ggplot2)
 
+#Plot: Life expectancy at birth per Total Wealth Quintile (2016)
 ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
   geom_col(fill = "steelblue") +
   coord_flip(ylim = c(60, NA)) +  # <<--- set limit here
@@ -395,9 +398,8 @@ ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Leven
     axis.title.x = element_text(margin = margin(t = 10))
   )
 
-
-# Plot: Education level vs. Welfare Index
-# Ensure the education level order is correct (basic to advanced)
+#Plot: Education level vs. Welfare Index
+#Ensure the education level order is correct (most basic to most advanced)
 Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
   Welzijn_naar_opleidingsniveau$Opleidingsniveau,
   levels = c(
@@ -432,26 +434,18 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
   )
 
 
-
-
-
-
-
-
-library(dplyr)
-
-# Specificeer de juiste Kenmerken (opleidingsniveaugroepen)
+#specify the right 'kenmerken' (Level of education groups)
 opleidingskenmerken <- c(2018710, 2018720, 2018750, 2018800, 2018810)
 
-# Maak nieuwe dataset
+#Create new dataset
 Welzijn_temporal_visualization <- Welzijn_Goed %>%
-  # Filter op juiste Kenmerken én Marges
+  #Filter on the right 'Kenmerken' and 'Marges'
   filter(Kenmerken %in% opleidingskenmerken, Marges == "MW00000") %>%
   
-  # Voeg kolom Jaar toe (bijv. "2016JJ00" → 2016)
+  #Add column year (i.e. "2016JJ00" → 2016)
   mutate(Jaar = as.numeric(substr(Perioden, 1, 4))) %>%
   
-  # Maak WelzijnIndex als gemiddelde van de geselecteerde kolommen
+  #Make 'WelzijnIndex' the middle row
   rowwise() %>%
   mutate(WelzijnIndex = mean(c_across(c(
     ScoreGeluk_1,
@@ -464,7 +458,7 @@ Welzijn_temporal_visualization <- Welzijn_Goed %>%
   )), na.rm = TRUE)) %>%
   ungroup() %>%
   
-  # Selecteer alleen relevante kolommen
+  #Select only the relevant rows
   select(Kenmerken, Jaar, WelzijnIndex)
 
 Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
@@ -480,7 +474,7 @@ Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
   ) %>%
   select(Opleidingsniveau, Jaar, WelzijnIndex)
 
-## Next plot
+##Next plot
 Welzijn_temporal_visualization$Opleidingsniveau <- factor(
   Welzijn_temporal_visualization$Opleidingsniveau,
   levels = c(
@@ -518,8 +512,8 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     axis.title.y = element_text(margin = margin(r = 10))
   )
 
-# Create the 'two temporal visualizations with an event analysis weaved in'-plot
-# number 1
+#Create the 'two temporal visualizations with an event analysis weaved in'-plot
+#number 1
 ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
@@ -535,7 +529,7 @@ ggplot(Ervaren_Gezondheid,
   annotate("text", x = 2, y = 69.9 - 3.3, label = "Rotterdam Vitaal en Healthy", 
            color = "black", angle = 0, vjust = 1, size = 3) +
   
-  # Amsterdam event (tussen 2016 en 2020 = x = 2.33)
+  #Amsterdam event (between 2016 and 2020 = x = 2.33)
   geom_segment(aes(x = 2.33, xend = 2.33, y = 73.8 - 0.4, yend = 73.8 + 2.8), 
                color = "black", linewidth = 0.4) +
   annotate("text", x = 2.25, y = 79 - 1.3, label = "Amsterdam Vitaal & Gezond", 
@@ -554,19 +548,9 @@ ggplot(Ervaren_Gezondheid,
   theme_minimal() +
   theme(legend.position = "bottom")
 
-# Number 2
+#Number 2
 
-
-
-
-
-
-
-
-
-
-
-# Prepare data
+#Prepare data
 plot_data <- Ultimate_dataset_of_doom_hell_and_destruction %>%
   select(Geslacht, Levensverwachting, WelzijnIndex) %>%
   pivot_longer(
@@ -614,22 +598,16 @@ ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
   )
 
 
-
-
 ##############################
 ###de correlation map maken###
 ##############################
-library(readr)
-library(cbsodataR)
-library(tidyverse)
-library(sf)
 
 Ervaren_gezondheid_wijk <- read_delim("Ervarengezondheid_Wijk&Buurt.csv", delim = ";")
 Inkomen_per_gemeente <- read_delim("Inkomen_gemeente.csv", delim = ";")
 Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv", delim = ";")
 gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 
-#Overbodige info weg filteren
+#Clean non-relevant information
 Inkomen_per_wijk <- Inkomen_per_gemeente
 Inkomen_per_wijk <- Inkomen_per_wijk %>%
   filter(Regionaam != "Totaal")
@@ -650,7 +628,7 @@ Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
   filter(SoortRegio_2 == "Wijk")
 
 #creating new data set for calculating and mapping later on
-# Gezondheid en welvaart data mergen
+#Merge 'gezondheid' and 'welvaart' datasets
 gemeente_wijk_data <- inner_join(
   Inkomen_per_wijk, Ervaren_gezondheid_wijk, by = "Wijkcode") %>%
   select(statnaam, Regionaam, Wijkcode, Gemiddeld, ErvarenGezondheidGoedZeerGoed_4)
@@ -659,7 +637,6 @@ gemeente_wijk_data$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(gsub(",", ".", 
 gemeente_wijk_data$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_wijk_data$Gemiddeld)) #commas omzetten naar punten
 
 ##making the correlation variable per gemeente
-library(dplyr)
 gemeente_cor <- gemeente_wijk_data %>%
   group_by(statnaam) %>%
   filter(n() >= 3) %>%
@@ -691,10 +668,8 @@ ggplot(gemeente_wijk_mapdata) +
   labs(caption = "Grey areas = insufficient data") 
 
 
-
-
 ################################################################
-######MAKING THE plot SHOWING CORRELATION WEALTH AND HEALTH######
+######MAKING THE plot SHOWING CORRELATION WEALTH AND HEALTH#####
 ################################################################
 
 #statcode weg filteren bij Inkomen_per_gemeenten
@@ -708,29 +683,28 @@ Levensverwachting_Gemeente <- Levensverwachting_Gemeente %>%
   filter(RegioS %in% Inkomen_per_gemeente$Gemeentecode)
 
 
-# Gezondheid en welvaart data mergen
+#'Gezondheid' and 'welvaart' data merge
 gemeente_data <- left_join(Inkomen_per_gemeente, Levensverwachting_Gemeente, by = c("Gemeentecode" = "RegioS"))
 
-# de gemengde data koppelen aan de map
+#connecting the merged data to the map
 gemeente_mapdata <- left_join(gemeentegrenzen, gemeente_data, by = c("statcode" = "Gemeentecode"))
 
-####### De covariance uitrekenen voor elke gemeente ######
+####### calculate the covariance for every municipality ######
 gemeente_mapdata$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_mapdata$Gemiddeld)) #commas omzetten naar punten
 gemeente_mapdata$Levensverwachting_1 <- as.numeric(gemeente_mapdata$Levensverwachting_1)
 
 cor(gemeente_mapdata$Levensverwachting_1, gemeente_mapdata$Gemiddeld, use = "complete.obs") # +1 = perfect positive relation, 0 = no correlation, -1 = perfect negative correlation                                                                      
 
 
-library(ggplot2)
 ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
   geom_point() +
   geom_smooth(method = "lm") +
   labs(x = "Income", y = "Life Expectancy")
 
-#Making a graph showing development in "ervaren gezondheid" in de gemeenten
-#Amsterdam en Rotterdam over de jaren: 2012, 2016, 2020
+#Making a graph showing development in "ervaren gezondheid" in the municipalities
+#Amsterdam and Rotterdam over the years: 2012, 2016, 2020
 
-#filtering only "Amsterdam" and "Rotterdam" whole municipality
+#Isolating only the entirety of the "Amsterdam" and "Rotterdam" municipalities
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
   Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
     Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
