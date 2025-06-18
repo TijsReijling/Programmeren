@@ -745,26 +745,36 @@ Ervaren_Gezondheid_NL_AM_RO <- rbind(Ervaren_Gezondheid, ErvarenGezondheidNL)
 Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4 <- 
   as.numeric(Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4)
 
+Ervaren_Gezondheid_NL_AM_RO <- Ervaren_Gezondheid_NL_AM_RO %>%
+  mutate(Region = case_when(
+    WijkenEnBuurten == "GM0363" ~ "Amsterdam",
+    WijkenEnBuurten == "GM0599" ~ "Rotterdam",
+    WijkenEnBuurten == "NL01"   ~ "The Netherlands",
+    TRUE ~ NA_character_
+  ))
+
 #Plotting the line graph
 ggplot(Ervaren_Gezondheid_NL_AM_RO, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
-           colour = WijkenEnBuurten, group = WijkenEnBuurten)) +
+           colour = Region, group = Region)) +
   geom_line(size = 1.5) +
-  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
+  geom_point(colour = "black", size = 2.5, show.legend = FALSE) +
+  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4,
+                vjust = ifelse(Region == "The Netherlands", -0.8, 1.9)),
             colour = "black", 
-            vjust = -1,
-            show.legend = F) +
-  geom_point(colour = "black", size = 2.5, show.legend = F) +
-  
-  scale_colour_manual(values = c("#C41230", "#39B54A", "orange", "black" )) +
-  scale_x_discrete(label = c(2012, 2016, 2020)) +
-  scale_y_continuous(
-    limits = c(65, 80),
-    breaks = seq(0, 100, by = 5)) +
-  
-  labs(x = "Year (2012, 2016, 2020)", 
-       y = "Perceived health (% wel or very well)",
-       title = "Perceived Health per Municipality",
-       colour = "Region") +
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(
+    "Amsterdam" = "#C41230",
+    "Rotterdam" = "#39B54A",
+    "The Netherlands" = "orange"
+  )) +
+  scale_x_discrete(labels = c("2012", "2016", "2020")) +
+  scale_y_continuous(limits = c(65, 80), breaks = seq(0, 100, by = 5)) +
+  labs(
+    x = "Year (2012, 2016, 2020)",
+    y = "Perceived health (% wel or very well)",
+    title = "Perceived Health per Municipality",
+    colour = "Region"
+  ) +
   theme_minimal() +
   theme(legend.position = "bottom")
