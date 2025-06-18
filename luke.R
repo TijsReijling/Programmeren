@@ -50,6 +50,8 @@ Inkomen_per_gemeente <- read_delim("Inkomen_gemeente.csv", delim = ";")
 
 Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv", delim = ";")
 
+ErvarenGezondheidNL <- read_csv("ErvarenGezondheidNL.csv")
+
 gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 
 
@@ -302,7 +304,7 @@ gemeente_shape <- gemeente_shape %>%
 #Load new GemeenteJuist data
 data <- read_csv("GemeentesJuist.csv", locale = locale(encoding = "UTF-8"))
 
-# Filter alleen gemeenten uit de data
+#Isolate only municipalities
 gemeente_data <- data %>%
   filter(str_to_lower(SoortRegio_2) == "gemeente") %>%
   select(Gemeentenaam_1, ErvarenGezondheidGoedZeerGoed_4)
@@ -724,3 +726,45 @@ ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
   geom_point() +
   geom_smooth(method = "lm") +
   labs(x = "Income", y = "Life Expectancy")
+
+#Making a graph showing development in "ervaren gezondheid" in de gemeenten
+#Amsterdam en Rotterdam over de jaren: 2012, 2016, 2020
+
+#filtering only "Amsterdam" and "Rotterdam" whole municipality
+Ervaren_Gezondheid <- Ervaren_Gezondheid[
+  Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
+    Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
+
+#Creating new data set with Amsterdam, Rotterdam, and entire Netherlands
+Ervaren_Gezondheid <- Ervaren_Gezondheid %>%
+  select(-Gemeentenaam_1, -SoortRegio_2, -Codering_3)
+
+Ervaren_Gezondheid_NL_AM_RO <- rbind(Ervaren_Gezondheid, ErvarenGezondheidNL)
+
+#Converting the created dataset to numerics
+Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4 <- 
+  as.numeric(Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4)
+
+#Plotting the line graph
+ggplot(Ervaren_Gezondheid_NL_AM_RO, 
+       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
+           colour = WijkenEnBuurten, group = WijkenEnBuurten)) +
+  geom_line(size = 1.5) +
+  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
+            colour = "black", 
+            vjust = -1,
+            show.legend = F) +
+  geom_point(colour = "black", size = 2.5, show.legend = F) +
+  
+  scale_colour_manual(values = c("#C41230", "#39B54A", "orange", "black" )) +
+  scale_x_discrete(label = c(2012, 2016, 2020)) +
+  scale_y_continuous(
+    limits = c(65, 80),
+    breaks = seq(0, 100, by = 5)) +
+  
+  labs(x = "Year (2012, 2016, 2020)", 
+       y = "Perceived health (% wel or very well)",
+       title = "Perceived Health per Municipality",
+       colour = "Region") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
