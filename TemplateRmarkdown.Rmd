@@ -159,4 +159,20 @@ Provide the link to your PUBLIC repository here: ...
 
 ## 5.2 Reference list
 
-Use APA referencing throughout your document.
+#Bovenaan welvaartsladder bijna 25 jaar langer in goede gezondheid. (2022, December 20). Centraal Bureau Voor De Statistiek. <https://www.cbs.nl/nl-nl/nieuws/2022/51/bovenaan-welvaartsladder-bijna-25-jaar-langer-in-goede-gezondheid>?
+
+#Pharos. (2022, July). Sociaal economische Gezondheidsverschillen (SEGV). <https://www.pharos.nl/factsheets/sociaaleconomische-gezondheidsverschillen-segv/>
+
+#Sociaaleconomische gezondheidsverschillen \| Volksgezondheid en Zorg. (n.d.). <https://www.vzinfo.nl/sociaaleconomische-gezondheidsverschillen>
+
+These sources include links to the datasets and their corresponding metadata.
+
+Gezonde levensverwachting; inkomen en welvaart. (2025, May 23). CBS dataportaal. <https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=85445NED&_theme=154>
+
+Welzijn; kerncijfers, persoonskenmerken. (2025, March 20). CBS dataportaal. <https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=85542NED&_theme=178>
+
+Inkomen per gemeente en wijk, 2020. (2023, September 1). Centraal Bureau voor de Statisktiek. <https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020> (metadata included in dataset)
+
+Gezondheid per wijk en buurt; 2012/2016/2020/2022. (2024, December 09). RIVM dataportaal. <https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94>
+
+Levensverwachting op de leeftijd 0 en 65 jaar; geslacht, regio 1996-2022. (2024, December 9). RIVM dataportaal. <https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50132NED&_theme=101>
