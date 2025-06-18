@@ -7,37 +7,55 @@
 ###########################
 ###########################
 
+#################################
+##### Set working directory #####
+#################################
+
 setwd("~/GitHub/Programmeren/data")
 
+####################################
+##### Run if packages required #####
+####################################
+
+#install.packages("dplyr")
+#install.packages("pkg")
+#install.packages("tidyverse")
+#install.packages("cbsodataR")
+#install.packages("sf")
+#install.packages("readr")
+#install.packages("ggplot2")
+
+##### library all packages #####
+library(cbsodataR)
+library(sf)
 library(readr)
+library(ggplot2)
+library(tidyverse)
+#library(pkg)
+library(dplyr)
+
+##############################################
+##### Load all data into the Environment #####
+##############################################
+
 Welzijn_Goed <- read_csv("Welzijn.goed.csv")
 
-library(readr)
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
 
-library(readr)
 Levensverwachting <- read_csv("Levensverwachting.csv")
 
-#References
-##write.csv(Levensverwachting, "Levensverwachting.csv")
+Ervaren_gezondheid_wijk <- read_delim("Ervarengezondheid_Wijk&Buurt.csv", delim = ";")
 
-##Levensverwachting <- read_csv("Levensverwachting.csv")
+Inkomen_per_gemeente <- read_delim("Inkomen_gemeente.csv", delim = ";")
 
-##write.csv(`Ervaren_Gezondheid`, "Ervaren_Gezondheid.csv")
+Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv", delim = ";")
 
-##write.csv(Welzijn_Goed, "Welzijn.goed.csv")
+gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 
-
-
-Welzijn_Goed = read.csv("Welzijn.goed.csv") 
-Levensverwachting = read.csv("Levensverwachting.csv")
-Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
 
 ###########################
 ##### DATA PROCESSING #####
 ###########################
-
-library(dplyr)
 
 #Isolate the rows that contain 2015G400 rows to get the data of the years 2015-2018 in Dataset Levensverwachting
 Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perioden),]
@@ -45,7 +63,7 @@ Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perio
 #Isolate the rows that contain 2015JJ00, 2016JJ00, 2017JJ00, 2018JJ00 to get the data of the years 2015-2018 in Dataset Welzijn 
 Welzijn_Goed <- Welzijn_Goed[Welzijn_Goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 
-#Isolate
+#Create a new variable, averages of all welzijn questionnaire scores
 Welzijn_averages <- Welzijn_Goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
@@ -54,15 +72,12 @@ Welzijn_averages <- Welzijn_Goed %>%
     .groups = "drop"
   ) 
 
-
 #Check if the columns in Welzijn and Welzijn_averages are the same
-
 setdiff(names(Welzijn_Goed), names(Welzijn_averages))
 
 sapply(Welzijn_Goed[setdiff(names(Welzijn_Goed), names(Welzijn_averages))], class)
 
 #Change the columns in Welzijn_Goed that are not numeric to numeric
-
 Welzijn_Goed <- Welzijn_Goed %>%
   mutate(across(all_of(c(
     "ScoreTevredenheidMetWerk_13", "Ontevreden_14", "NietTevredenNietOntevreden_15",
@@ -72,7 +87,6 @@ Welzijn_Goed <- Welzijn_Goed %>%
   )), ~ as.numeric(as.character(.))))
 
 #Rerun the averaging process after converting the columns to numeric
-
 Welzijn_averages <- Welzijn_Goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
@@ -83,8 +97,6 @@ Welzijn_averages <- Welzijn_Goed %>%
 
 #Check if the columns in Welzijn and Welzijn_averages are the same again
 setdiff(names(Welzijn_Goed), names(Welzijn_averages))
-
-Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv", col_names = TRUE,)
 
 #Isolate the rows with the averages of gemeenten 'Amsterdam' & 'Rotterdam'
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
@@ -108,13 +120,11 @@ Welzijn_averages_2016 <- Welzijn_averages %>%
   filter(Marges == "MW00000", Perioden == "2015–2018") %>%
   mutate(Perioden = "2016")
 
-# ...existing code...
-
-# Zorg dat de kolomnamen gelijk zijn
+#Make sure the column names are consistent for merging
 Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
-  rename(Kenmerken = InkomenEnWelvaart)  # pas aan als dit de koppelsleutel is
+  rename(Kenmerken = InkomenEnWelvaart) 
 
-# Zet 'Kenmerken' in beide dataframes om naar character
+#Transform 'kenmerken' in both datasets to character type
 Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
   mutate(Kenmerken = as.character(Kenmerken))
 
@@ -128,25 +138,13 @@ merged_data <- full_join(
   by = c("Kenmerken", "Perioden")
 )
 
-# ...existing code...
 
-
-
-#dit gekke ding gedaan om scale te kunnen veranderen.
+#Change the scale in Ervaren_GEzondheid
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
   as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
 
-#Making a graph showing development in "ervaren gezondheid" in de gemeenten
+#Making a graph showing development in "ervaren gezondheid" in the municipalities
 #Amsterdam en Rotterdam over de jaren: 2012, 2016, 2020
-
-#check if you got these packages so it runs properly 
-library(tidyverse)
-library(cbsodataR)
-library(sf)
-#otherwise:
-#install.packages("tidyverse")
-#install.packages("cbsodataR")
-#install.packages("sf")
 
 ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
@@ -170,32 +168,8 @@ ggplot(Ervaren_Gezondheid,
        colour = "Municipality") +
   theme_minimal() +
   theme(legend.position = "bottom")
-#voeg lijn toe met gemiddelde van Nederland  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Add a line with the average of the Netherlands 
 
 
 # Create a new dataset for the year 2016, with only a couple of values kept
@@ -225,11 +199,11 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
     ), na.rm = TRUE)
   )
 
-# Move New column WelzijnIndex to the front and delete the old columns
+#Move New column WelzijnIndex to the front and delete the old columns
 Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 
-# Filter the dataset to only include rows with specific educational levels
+#Filter the dataset to only include rows with specific educational levels
 Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(
     "2018710",  # Basisonderwijs
@@ -239,7 +213,7 @@ Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
     "2018810"   # Hbo-, wo-master, doctor
   ))
 
-# Rename the 'Kenmerken' column to a new 'Opleidingsniveau' column for clarity
+#Rename the 'Kenmerken' column to a new 'Opleidingsniveau' column for clarity
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   mutate(
     Opleidingsniveau = case_when(
@@ -252,16 +226,16 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
     )
   )
 
-# Remove the old 'Kenmerken' column and rearrange the columns
+#Remove the old 'Kenmerken' column and rearrange the columns
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Kenmerken) %>%
   relocate(Opleidingsniveau, .before = everything())
 
-# Filter the Levensverwachting dataset for the relevant characteristics (3000 and 4000)
+#Filter the Levensverwachting dataset for the relevant characteristics (3000 and 4000)
 Levensverwachting_geslacht <- Levensverwachting_2016_renamed %>%
   filter(Geslacht %in% c(3000, 4000))
 
-# Rename 3000 and 4000 to "Mannen" & "Vrouwen" respectively
+#Rename 3000 and 4000 to "Mannen" & "Vrouwen" respectively
 Levensverwachting_geslacht <- Levensverwachting_geslacht %>%
   mutate(
     Geslacht = case_when(
@@ -269,19 +243,20 @@ Levensverwachting_geslacht <- Levensverwachting_geslacht %>%
       Geslacht == 4000 ~ "Vrouwen"
     ))
 
-# Take the average life expectancy of Men & Women
+#Take the average life expectancy of Men & Women
 Levensverwachting_geslacht_gemiddeld <- Levensverwachting_geslacht %>%
   group_by(Geslacht) %>%
   summarise(
     Jaar = "2016",
     Levensverwachting = mean(Levensverwachting_1, na.rm = TRUE)
   )
-# Note: The value for life expectancy may seem 'low' because it reflects the
-# number of years a person in this age group is still expected to live.
-# For example, someone in the 80-year age group has have a life expectancy of around 8 years.
 
-# Create a new dataset for to showcase the WelzijnIndex for both 'Men' & 'Women'
-# Give it the same form as Levensverwachting_geslacht_gemiddeld
+#Note: The value for life expectancy may seem 'low' because it reflects the
+#number of years a person in this age group is still expected to live.
+#For example, someone in the 80-year age group has have a life expectancy of around 8 years.
+
+#Create a new dataset for to showcase the WelzijnIndex for both 'Men' & 'Women'
+#Give it the same form as Levensverwachting_geslacht_gemiddeld
 Welzijn_naar_geslacht <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(3000, 4000)) %>%
   mutate(
@@ -292,19 +267,20 @@ Welzijn_naar_geslacht <- Welzijn_index_2016 %>%
   ) %>%
   select(Geslacht, Jaar = Perioden, WelzijnIndex)
 
-# Merge the two datasets into one 
+#Merge the two datasets into one 
 Ultimate_dataset_of_doom_hell_and_destruction <- full_join(
   Levensverwachting_geslacht_gemiddeld,
   Welzijn_naar_geslacht,
   by = c("Geslacht", "Jaar")
 )
-# Take the marges out of Welzijn_naar_opleidingsniveau and change the perioden to the year
+
+#Take the marges out of Welzijn_naar_opleidingsniveau and change the perioden to the year
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   filter(Marges == "MW00000") %>%
   select(-Marges) %>%
   rename(Jaar = Perioden)
 
-# Vereiste packages automatisch installeren en laden
+#Install required packages automatically
 packages <- c("sf", "dplyr", "ggplot2", "readr", "tmap", "stringr")
 installed <- rownames(installed.packages())
 for (pkg in packages) {
@@ -312,18 +288,18 @@ for (pkg in packages) {
 }
 lapply(packages, library, character.only = TRUE)
 
-# Laad de gemeentegrenzen van 2020 als GeoJSON via PDOK
+#Load the municipality borders map
 gemeente_shape <- st_read(
   "https://service.pdok.nl/cbs/gebiedsindelingen/2020/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json",
   quiet = TRUE
 )
 
-# Selecteer alleen relevante kolommen en hernoem
+#Isolate only relevant columns and rename them
 gemeente_shape <- gemeente_shape %>%
   select(statcode, statnaam, geometry) %>%
   rename(GM_CODE = statcode, GM_NAAM = statnaam)
 
-# Laad je CSV data (controleer pad en encoding indien nodig)
+#Load new GemeenteJuist data
 data <- read_csv("GemeentesJuist.csv", locale = locale(encoding = "UTF-8"))
 
 # Filter alleen gemeenten uit de data
