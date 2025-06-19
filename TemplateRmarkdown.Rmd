@@ -152,7 +152,7 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 
 Variable 1
 
-```{r gen_var1}
+```{r gen_var1, eval=FALSE, include=FALSE}
 gemeente_cor <- gemeente_wijk_data %>%
   group_by(statnaam) %>%
   filter(n() >= 3) %>%
@@ -183,7 +183,7 @@ Variable 2
 
 ## 3.3 Visualize temporal variation
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
@@ -208,7 +208,7 @@ ggplot(Ervaren_Gezondheid,
   theme(legend.position = "bottom")
 ```
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 ggplot(Ervaren_Gezondheid_NL_AM_RO, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Region, group = Region)) +
@@ -237,7 +237,7 @@ ggplot(Ervaren_Gezondheid_NL_AM_RO,
 
 ## 3.4 Visualize spatial variation
 
-```{r visualise_map}
+```{r visualise_map, eval=FALSE, include=FALSE}
 ggplot(gemeente_wijk_mapdata) +
   geom_sf(aes(fill = correlation)) + 
   theme_minimal() +
@@ -256,7 +256,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 What is the poverty rate by state?
 
-```{r visualise_subpopulations}
+```{r visualise_subpopulations, eval=FALSE, include=FALSE}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -288,7 +288,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 ## 3.6 Event analysis
 
-```{r Event_analysis}
+```{r Event_analysis, eval=FALSE, include=FALSE}
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4)
 ggplot(Ervaren_Gezondheid, aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4, colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
 
