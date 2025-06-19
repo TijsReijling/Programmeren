@@ -80,7 +80,9 @@ ErvarenGezondheidNL <- read_csv("ErvarenGezondheidNL.csv")
 gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 ```
 
-## 2.2 Provide a short summary of the dataset(s)
+## 2.2 Provide a short summary of the datasets
+
+### Welzijn dataset
 
 ```{r}
 head(Welzijn_Goed)
@@ -91,33 +93,25 @@ This data set contains and presents figures on the wellness/well-being of the po
 
 [URL of the data download page](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=85542NED&_theme=178) + Metadata
 
-```{r}
-head("Ervaren_Gezondheid")
-```
+### Ervaren Gezondheid dataset
 
 The table contains estimated percentages of indicators related to health, social situation, and lifestyle at neighborhood, district, and municipal levels, based on a conducted survey.
 
 [URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94) + Metadata
 
-```{r}
-head("Levensverwachting"")
-```
+### Levensverwachting dataset
 
 This dataset provides us with information about the life expectancy across different periods between 1996-2022.The numbers are provided on a national and municipal level. The data at the municipal level are calculated on the basis of a 4-year period.
 
-[URL 0f the data download page]((https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50132NED&_theme=101)) + Metadata
+[URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50132NED&_theme=101) + Metadata
 
-```{r}
-head("Ervarengezondheid_Wijk&Buurt")
-```
+### Ervaren Gezondheid 'Wijken' & 'Buurten'
 
 The table contains self-reported health indicators through a questionnaire about health, social situation, and lifestyle at neighborhood, district, and municipal levels. The average of all people living in a municipality or neighbourhood is computed.
 
 [URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94) + Metadata
 
-```{r}
-head("Inkomen_gemeente")
-```
+### Inkomen Gemeentes
 
 For each household within a municipality or neighbourhood, the total household income was calculated and then divided by the number of household members. This results in the average income per person, which accounts for differences in household size and provides a more accurate measure of individual economic well-being.
 
@@ -139,11 +133,13 @@ Despite their recent publication, they are still collected in different years. L
 
 Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
 
-```{r data_cleaning}
+```{r Isolate_both_datasets_for_2015-2018}
+Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perioden),]
+Welzijn_Goed <- Welzijn_Goed[Welzijn_Goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
+```
 
+```{r}
 
-
-#mean(dataset$percollege)
 ```
 
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
