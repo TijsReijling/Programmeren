@@ -94,8 +94,27 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 Variable 1
 
 ```{r gen_var1}
+gemeente_cor <- gemeente_wijk_data %>%
+  group_by(statnaam) %>%
+  filter(n() >= 3) %>%
+  summarise(
+    correlation = if (sum(complete.cases(as.numeric(Gemiddeld, ErvarenGezondheidGoedZeerGoed_4))) > 1)
+      {cor(as.numeric(Gemiddeld), as.numeric(ErvarenGezondheidGoedZeerGoed_4), use = "complete.obs")} 
+    else {NA_real_})
 
+###!!! CHECK IF THIS PART BELOW HAS TO BE EVEN IN HERE!!!###
+#This isnt creating new var, but adding to new data set
+#trimming white spaces so I can add the geometry for the heat map
+gemeentegrenzen <- gemeentegrenzen %>%
+  mutate(statnaam = tolower(trimws(statnaam)))
+gemeente_cor <- gemeente_cor %>%
+  mutate(statnaam = tolower(trimws(statnaam)))
+
+gemeente_wijk_mapdata <- gemeentegrenzen %>%
+  left_join(gemeente_cor, by = "statnaam")
 ```
+
+We decided to make a new variable called "correlation" that we added
 
 Variable 2
 
@@ -106,12 +125,46 @@ Variable 2
 ## 3.3 Visualize temporal variation
 
 ```{r}
-
+#Plotting the line graph
+ggplot(Ervaren_Gezondheid_NL_AM_RO, 
+       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
+           colour = Region, group = Region)) +
+  geom_line(size = 1.5) +
+  geom_point(colour = "black", size = 2.5, show.legend = FALSE) +
+  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4,
+                vjust = ifelse(Region == "The Netherlands", -0.8, 1.9)),
+            colour = "black", 
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(
+    "Amsterdam" = "#C41230",
+    "Rotterdam" = "#39B54A",
+    "The Netherlands" = "orange"
+  )) +
+  scale_x_discrete(labels = c("2012", "2016", "2020")) +
+  scale_y_continuous(limits = c(65, 80), breaks = seq(0, 100, by = 5)) +
+  labs(
+    x = "Year (2012, 2016, 2020)",
+    y = "Perceived health (% wel or very well)",
+    title = "Perceived Health per Municipality",
+    colour = "Region"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 ```
 
 ## 3.4 Visualize spatial variation
 
 ```{r visualise_map}
+#plotting the heat map
+ggplot(gemeente_wijk_mapdata) +
+  geom_sf(aes(fill = correlation)) + 
+  theme_minimal() +
+  scale_fill_gradient2(high = "#6A0DAD", mid = "lightgrey", low = "#FFD700",
+                       limits = c(-1, 1),
+                       breaks = c(-1, -0.5, 0, 0.5, 1),
+                       name = "Correlation 'income & health'") +
+  theme(legend.position = "left") + 
+  labs(caption = "Grey areas = insufficient data") 
 
 ```
 
@@ -122,18 +175,30 @@ Here you provide a description of why the plot above is relevant to your specifi
 What is the poverty rate by state?
 
 ```{r visualise_subpopulations}
-dataset$inmetro <- dataset$inmetro %>% as.factor()
-# Boxplot of poverty rate by state using the 'midwest' dataset
-ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
-  geom_boxplot() +
+ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  scale_x_continuous(breaks = 2015:2018) +
+  scale_color_manual(
+    values = c(
+      "Basisonderwijs" = "#F8766D",
+      "Vmbo, havo-, vwo-onderbouw, mbo1" = "#C49A00",
+      "Havo, vwo, mbo2-4" = "#00BA38",
+      "Hbo-, wo-bachelor" = "#00BFC4",
+      "Hbo-, wo-master, doctor" = "#C77CFF"
+    )
+  ) +
   labs(
-    title = "Distribution of Poverty Rates by Metropolitan status (Midwest counties)",
-    x = "Metropolitan Area",
-    y = "Poverty Rate of Adults (%)"
+    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
+    x = "Year",
+    y = "Welfare Index",
+    color = "Education level"
   ) +
   theme_minimal() +
   theme(
-    legend.position = "right"
+    plot.title = element_text(size = 9, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
   )
 ```
 
