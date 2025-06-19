@@ -752,3 +752,4 @@ ggplot(Ervaren_Gezondheid_NL_AM_RO,
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
+
