@@ -9,15 +9,25 @@ output:
 # Set-up your environment
 
 ```{r package_install, include=FALSE}
-install.packages("tidyverse")
-install.packages("yaml")
-install.packages("rmarkdown")
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("yaml", quietly = TRUE)) install.packages("yaml")
+if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+if (!requireNamespace("cbsodataR", quietly = TRUE)) install.packages("cbsodataR")
+if (!requireNamespace("sf", quietly = TRUE)) install.packages("sf")
+if (!requireNamespace("readr", quietly = TRUE)) install.packages("readr")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
 ```
 
 ```{r packages}
-require(tidyverse)
-require(rmarkdown)
-require(yaml)
+library(tidyverse)
+library(rmarkdown)
+library(yaml)
+library(dplyr)
+library(cbsodataR)
+library(sf)
+library(readr)
+library(ggplot2)
 ```
 
 # Title Page
@@ -235,7 +245,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 ## 5.1 Github repository link
 
-Provide the link to your PUBLIC repository here: ...
+https://github.com/TijsReijling/Programmeren 
 
 ## 5.2 Reference list
 
