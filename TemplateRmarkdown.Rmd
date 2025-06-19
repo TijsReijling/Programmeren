@@ -42,11 +42,23 @@ Use APA referencing throughout your document. [Here's a link to some explanation
 
 ## 1.1 Describe the Social Problem
 
-Include the following:
+Topic:
+How does income inequality contribute to differences in health and life expectancy between high- and low-income groups in the Netherlands?
 
--   Why is this relevant?
+In the Netherlands, healthcare is universally granted to all citizens through mandatory health insurance. The government promotes healthcare equality through regulations that ensures equal access to services by prohibiting insurance companies to decline clients. Yet, low-income groups in the Netherlands still experience worse health outcomes than their wealthier counterparts. 
 
--   ...
+Research by the Ministry of Health, Welfare and Sport shows that college or university-educated people, which correlates with a higher income, consistently score higher on health outcomes. VZinfo found that people with primary or VMBO-level education were significantly more likely to smoke, have obesity, and rate their health as “poor” compared to their higher educated peers (VZinfo, 2023).
+
+Institutions like the CBS document imbalances between income level and life expectancy. Their analyses show that the wealthiest group in society lives, on average, eight years longer and spend 25 more years in good health than those in the lowest-income group. (Centraal Bureau voor de Statistiek [CBS], 2022).
+
+Pharos provides us with more disparities by emphasising socio-economic differences in health. According to Pharos, receiving welfare benefits correlates with poorer health. They state that with each step up on the social ladder, their chance of good health increases (Pharos, 2022). These health differences across different income groups undermine social cohesion, which makes health inequality based on ones health a social problem that needs to be examined.
+
+Why is this relevant? Wealth inequality in the Netherlands is growing, making these differences even more apparent. Factors like increasing housing costs, job security and education gaps contribute to the widening differences between low- and high-income individuals. 
+
+This debate about health inequality isn’t new. Some policy makers have been proposing to cut deductibles (eigen risico) since they contribute to people with lower incomes delaying their care. We aim to analyse this inequality to quantify how large these differences are and identify their potential causes. 
+
+What has not been examined extensively is whether this inequality holds true across  Dutch municipalities. Our aim is to analyse if this inequality hold true throughout the Netherlands, and identify regional differences in the relationship between wealth and health. 
+
 
 # Part 2 - Data Sourcing
 
