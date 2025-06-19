@@ -79,21 +79,21 @@ midwest is an example dataset included in the tidyverse package
 ## 2.2 Provide a short summary of the dataset(s)
 
 ```{r}
-head("Welzijn.goed.csv")
+head(Welzijn_Goed)
 
 ```
 
-In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
+This data set contains and presents figures on the wellness/well-being of the population of the Netherlands aged 18 years or older. This factors in happiness and satisfaction with life, satisfaction with education, work, travel, daily activities, weight, financial situation, housing, living environment social life and total amount of time spent on leisure. In addition, concerns about financial future, feelings of insecurity and trust in others are included. This data can be categorized by gender, age, education level and origin.
 
-URL van de data download pagina
+[URL of the data download page](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=85542NED&_theme=178)
 
 ```{r}
 head("Ervaren_Gezondheid.csv")
 ```
 
-korte summary tweede dataset
+The table contains estimated percentages of indicators related to health, social situation, and lifestyle at neighborhood, district, and municipal levels, based on a conducted survey.
 
-URL van de data download pagina
+[URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94)
 
 ```{r}
 head("Levensverwachting.csv")
@@ -107,19 +107,19 @@ URL van de data download pagina
 head("Ervarengezondheid_Wijk&Buurt.csv")
 ```
 
-korte summary vierde dataset
+The table contains self-reported health indicators through a questionnaire about health, social situation, and lifestyle at neighborhood, district, and municipal levels. The average of all people living in a municipality or neighbourhood is computed.
 
-URL van de data download pagina\
-\
+
+
+[URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94)
 
 ```{r}
 head("Inkomen_gemeente.csv")
 ```
 
-\
-korte summary vijfde dataset
+For each household within a municipality or neighbourhood, the total household income was calculated and then divided by the number of household members. This results in the average income per person, which accounts for differences in household size and provides a more accurate measure of individual economic well-being.
 
-URL van de data download pagina
+[URL of the data download page](https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020)
 
 ``` r
 inline_code = TRUE
