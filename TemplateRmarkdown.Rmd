@@ -57,6 +57,8 @@ Include the following:
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
 ```{r loading_data}
+setwd("~/GitHub/Programmeren/data")
+
 Welzijn_Goed <- read_csv("Welzijn.goed.csv")
 
 Ervaren_Gezondheid <- read_csv("Ervaren_Gezondheid.csv")
@@ -245,7 +247,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 ## 5.1 Github repository link
 
-https://github.com/TijsReijling/Programmeren 
+<https://github.com/TijsReijling/Programmeren>
 
 ## 5.2 Reference list
 
