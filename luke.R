@@ -29,13 +29,13 @@ setwd("~/GitHub/Programmeren/data")
 ##### library all packages #####
 ################################
 
+library(dplyr)
+library(tidyverse)
 library(cbsodataR)
 library(sf)
 library(readr)
 library(ggplot2)
-library(tidyverse)
 #library(pkg)
-library(dplyr)
 
 ##############################################
 ##### Load all data into the Environment #####
