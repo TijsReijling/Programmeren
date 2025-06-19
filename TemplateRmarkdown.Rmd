@@ -133,13 +133,19 @@ Despite their recent publication, they are still collected in different years. L
 
 Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
 
-```{r Isolate_both_datasets_for_2015-2018}
+```{r Isolate_both_datasets_for_2015_2018}
 Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perioden),]
 Welzijn_Goed <- Welzijn_Goed[Welzijn_Goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 ```
 
-```{r}
-
+```{r Create_the_new_variable_WelzijnIndex}
+Welzijn_averages <- Welzijn_Goed %>%
+  group_by(Kenmerken, Marges) %>%
+  summarise(
+    Perioden = "2015–2018",
+    across(where(is.numeric), mean, na.rm = TRUE),
+    .groups = "drop"
+  ) 
 ```
 
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
