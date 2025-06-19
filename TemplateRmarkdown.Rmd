@@ -76,11 +76,9 @@ Inkomen_per_gemeente <- read_delim("Inkomen_gemeente.csv", delim = ";")
 Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv", delim = ";")
 
 ErvarenGezondheidNL <- read_csv("ErvarenGezondheidNL.csv")
-
-gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
 ```
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 gemeentegrenzen <- sf::st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=1.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=application/json")
 ```
 
