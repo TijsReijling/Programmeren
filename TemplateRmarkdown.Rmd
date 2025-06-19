@@ -148,6 +148,110 @@ Welzijn_averages <- Welzijn_Goed %>%
   ) 
 ```
 
+```{r}
+setdiff(names(Welzijn_Goed), names(Welzijn_averages))
+
+sapply(Welzijn_Goed[setdiff(names(Welzijn_Goed), names(Welzijn_averages))], class)
+```
+
+```{r}
+Welzijn_Goed <- Welzijn_Goed %>%
+  mutate(across(all_of(c(
+    "ScoreTevredenheidMetWerk_13", "Ontevreden_14", "NietTevredenNietOntevreden_15",
+    "Tevreden_16", "ScoreTevredenheidMetReistijd_17", "Ontevreden_18",
+    "NietTevredenNietOntevreden_19", "Tevreden_20", "ScoreTevredenheidDagelijkseBezigheden_21",
+    "Ontevreden_22", "NietTevredenNietOntevreden_23", "Tevreden_24", "Ontevreden_58"
+  )), ~ as.numeric(as.character(.))))
+```
+
+```{r}
+Welzijn_averages <- Welzijn_Goed %>%
+  group_by(Kenmerken, Marges) %>%
+  summarise(
+    Perioden = "2015–2018",
+    across(where(is.numeric), mean, na.rm = TRUE),
+    .groups = "drop") 
+```
+
+```{r}
+Ervaren_Gezondheid <- Ervaren_Gezondheid[
+  Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
+    Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
+```
+
+```{r}
+Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
+```
+
+```{r}
+Levensverwachting_2016 <- Levensverwachting %>%
+  filter(Marges == "MW00000", Perioden == "2015G400") %>%
+  mutate(Perioden = "2016")
+```
+
+```{r}
+Welzijn_averages_2016 <- Welzijn_averages %>%
+  filter(Marges == "MW00000", Perioden == "2015–2018") %>%
+  mutate(Perioden = "2016")
+```
+
+```{r}
+Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
+  rename(Kenmerken = InkomenEnWelvaart)
+```
+
+```{r}
+Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
+  mutate(Kenmerken = as.character(Kenmerken))
+
+Welzijn_averages_2016 <- Welzijn_averages_2016 %>%
+  mutate(Kenmerken = as.character(Kenmerken))
+```
+
+```{r}
+merged_data <- full_join(
+  Levensverwachting_2016_renamed,
+  Welzijn_averages_2016,
+  by = c("Kenmerken", "Perioden"))
+```
+
+```{r}
+Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
+  as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
 ## 3.2 Generate necessary variables
