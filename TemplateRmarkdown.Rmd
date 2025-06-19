@@ -60,7 +60,7 @@ What has not been examined extensively is whether this inequality holds true acr
 
 ## 2.1 Load in the data
 
-```{r loading_data}
+```{r message=FALSE, warning=FALSE}
 setwd("~/GitHub/Programmeren/data")
 
 Welzijn_Goed <- read_csv("Welzijn.goed.csv")
@@ -78,6 +78,10 @@ Levensverwachting_Gemeente <- read_delim("Levensverwacht_Gemeente_Wijk&Buurt.csv
 ErvarenGezondheidNL <- read_csv("ErvarenGezondheidNL.csv")
 
 gemeentegrenzen <- st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json")
+```
+
+```{r message=FALSE, warning=FALSE}
+gemeentegrenzen <- sf::st_read("https://service.pdok.nl/cbs/gebiedsindelingen/2023/wfs/v1_0?request=GetFeature&service=WFS&version=1.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=application/json")
 ```
 
 ## 2.2 Provide a short summary of the datasets
@@ -138,23 +142,22 @@ Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perio
 Welzijn_Goed <- Welzijn_Goed[Welzijn_Goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 ```
 
-```{r Create_the_new_variable_WelzijnIndex}
+```{r Create_the_new_variable_WelzijnIndex, include=FALSE, warning=FALSE}
 Welzijn_averages <- Welzijn_Goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
     Perioden = "2015–2018",
     across(where(is.numeric), mean, na.rm = TRUE),
-    .groups = "drop"
-  ) 
+    .groups = "drop" ) 
 ```
 
-```{r}
+```{r include=FALSE}
 setdiff(names(Welzijn_Goed), names(Welzijn_averages))
 
 sapply(Welzijn_Goed[setdiff(names(Welzijn_Goed), names(Welzijn_averages))], class)
 ```
 
-```{r}
+```{r include=FALSE}
 Welzijn_Goed <- Welzijn_Goed %>%
   mutate(across(all_of(c(
     "ScoreTevredenheidMetWerk_13", "Ontevreden_14", "NietTevredenNietOntevreden_15",
@@ -164,7 +167,7 @@ Welzijn_Goed <- Welzijn_Goed %>%
   )), ~ as.numeric(as.character(.))))
 ```
 
-```{r}
+```{r include=FALSE}
 Welzijn_averages <- Welzijn_Goed %>%
   group_by(Kenmerken, Marges) %>%
   summarise(
@@ -200,7 +203,7 @@ Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
   rename(Kenmerken = InkomenEnWelvaart)
 ```
 
-```{r}
+```{r include=FALSE}
 Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
   mutate(Kenmerken = as.character(Kenmerken))
 
@@ -208,19 +211,19 @@ Welzijn_averages_2016 <- Welzijn_averages_2016 %>%
   mutate(Kenmerken = as.character(Kenmerken))
 ```
 
-```{r}
+```{r include=FALSE}
 merged_data <- full_join(
   Levensverwachting_2016_renamed,
   Welzijn_averages_2016,
   by = c("Kenmerken", "Perioden"))
 ```
 
-```{r}
+```{r include=FALSE}
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
   as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
 ```
 
-```{r}
+```{r include=FALSE, warning=FALSE}
 ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
@@ -245,7 +248,7 @@ ggplot(Ervaren_Gezondheid,
   theme(legend.position = "bottom")
 ```
 
-```{r}
+```{r include=FALSE}
 Welzijn_index_2016 <- Welzijn_averages_2016 %>%
   select(
     Kenmerken, Marges, Perioden,
@@ -259,7 +262,7 @@ Welzijn_index_2016 <- Welzijn_averages_2016 %>%
   )
 ```
 
-```{r}
+```{r include=FALSE}
 Welzijn_index_2016 <- Welzijn_index_2016 %>%
   mutate(
     WelzijnIndex = rowMeans(select(., 
@@ -274,12 +277,12 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(
     "2018710",  # Basisonderwijs
@@ -290,7 +293,7 @@ Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   ))
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   mutate(
     Opleidingsniveau = case_when(
@@ -860,6 +863,41 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 
 Variable 1
 
+```{r, eval=FALSE}
+Welzijn_averages <- Welzijn_Goed %>%
+  group_by(Kenmerken, Marges) %>%
+  summarise(
+    Perioden = "2015–2018",
+    across(where(is.numeric), mean, na.rm = TRUE),
+    .groups = "drop" ) 
+```
+
+Variable 2
+
+```{r, eval=FALSE}
+Welzijn_index_2016 <- Welzijn_averages_2016 %>%
+  select(
+    Kenmerken, Marges, Perioden,
+    ScoreGeluk_1,
+    ScoreTevredenheidMetHetLeven_5,
+    ScoreTevredenheidMetWerk_13,
+    ScoreTevredenheidDagelijkseBezigheden_21,
+    ScoreTevredenheidMetLichGezondheid_25,
+    ScoreTevredenheidPsychischeGezondheid_29,
+    ScoreTevredenheidMetSociaalLeven_57 )
+```
+
+```{r, eval=FALSE}
+Welzijn_index_2016 <- Welzijn_index_2016 %>%
+  mutate(WelzijnIndex = rowMeans(select(., 
+                                   ScoreGeluk_1,ScoreTevredenheidMetHetLeven_5,ScoreTevredenheidMetWerk_13,ScoreTevredenheidDagelijkseBezigheden_21,ScoreTevredenheidMetLichGezondheid_25,ScoreTevredenheidPsychischeGezondheid_29,ScoreTevredenheidMetSociaalLeven_57), na.rm = TRUE))
+```
+
+```{r, eval=FALSE}
+Welzijn_index_2016 <- Welzijn_index_2016 %>%
+  select(Kenmerken, Marges, Perioden, WelzijnIndex)
+```
+
 ```{r gen_var1, eval=FALSE, include=FALSE}
 gemeente_cor <- gemeente_wijk_data %>%
   group_by(statnaam) %>%
@@ -891,8 +929,18 @@ Variable 2
 
 ## 3.3 Visualize temporal variation
 
-```{r eval=FALSE, include=FALSE}
-ggplot(Ervaren_Gezondheid, 
+```{r include=FALSE}
+Ervaren_Gezondheid <- read.csv("Data/Ervaren_Gezondheid.csv")
+
+Ervaren_Gezondheid <- Ervaren_Gezondheid[
+  Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
+    Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
+
+Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4)
+```
+
+```{r side_by_side_plots, fig.show='hold', fig.width=6, fig.height=3, echo=FALSE}
+print(ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
   geom_line(size = 1.5) +
@@ -913,11 +961,9 @@ ggplot(Ervaren_Gezondheid,
        title = "Perceived Health per Municipality (2012-2020)",
        colour = "Municipality") +
   theme_minimal() +
-  theme(legend.position = "bottom")
-```
+  theme(legend.position = "bottom"))
 
-```{r, eval=FALSE, include=FALSE}
-ggplot(Ervaren_Gezondheid_NL_AM_RO, 
+print(ggplot(Ervaren_Gezondheid_NL_AM_RO, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Region, group = Region)) +
   geom_line(size = 1.5) +
@@ -940,12 +986,14 @@ ggplot(Ervaren_Gezondheid_NL_AM_RO,
     colour = "Region"
   ) +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom"))
 ```
 
 ## 3.4 Visualize spatial variation
 
-```{r visualise_map, eval=FALSE, include=FALSE}
+```{r visualise_maps_side_by_side, fig.show='hold', fig.width=6, fig.height=3, echo=FALSE, message=FALSE, warning=FALSE}
+print(kaart_plot)
+
 ggplot(gemeente_wijk_mapdata) +
   geom_sf(aes(fill = correlation)) + 
   theme_minimal() +
@@ -954,8 +1002,7 @@ ggplot(gemeente_wijk_mapdata) +
                        breaks = c(-1, -0.5, 0, 0.5, 1),
                        name = "Correlation 'income & health'") +
   theme(legend.position = "left") + 
-  labs(caption = "Grey areas = insufficient data") 
-
+  labs(caption = "Grey areas = insufficient data")
 ```
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
@@ -964,7 +1011,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 What is the poverty rate by state?
 
-```{r visualise_subpopulations, eval=FALSE, include=FALSE}
+```{r visualise_subpopulations, echo=FALSE}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -996,7 +1043,15 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 ## 3.6 Event analysis
 
-```{r Event_analysis, eval=FALSE, include=FALSE}
+```{r include=FALSE}
+Ervaren_Gezondheid <- read.csv("Data/Ervaren_Gezondheid.csv")
+
+Ervaren_Gezondheid <- Ervaren_Gezondheid[
+  Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
+    Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
+```
+
+```{r Event_analysis, echo=FALSE}
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4)
 ggplot(Ervaren_Gezondheid, aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4, colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
 
