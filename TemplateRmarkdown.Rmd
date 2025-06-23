@@ -280,7 +280,7 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 ```
 
-```{r, include=FALSE}
+```{r}
 Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(
     "2018710",  # Basisonderwijs
@@ -291,7 +291,7 @@ Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   ))
 ```
 
-```{r, include=FALSE}
+```{r}
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   mutate(
     Opleidingsniveau = case_when(
@@ -305,18 +305,18 @@ Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   select(-Kenmerken) %>%
   relocate(Opleidingsniveau, .before = everything())
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_geslacht <- Levensverwachting_2016_renamed %>%
   filter(Geslacht %in% c(3000, 4000))
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_geslacht <- Levensverwachting_geslacht %>%
   mutate(
     Geslacht = case_when(
@@ -325,7 +325,7 @@ Levensverwachting_geslacht <- Levensverwachting_geslacht %>%
     ))
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_geslacht_gemiddeld <- Levensverwachting_geslacht %>%
   group_by(Geslacht) %>%
   summarise(
@@ -334,7 +334,7 @@ Levensverwachting_geslacht_gemiddeld <- Levensverwachting_geslacht %>%
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_geslacht <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(3000, 4000)) %>%
   mutate(
@@ -346,7 +346,7 @@ Welzijn_naar_geslacht <- Welzijn_index_2016 %>%
   select(Geslacht, Jaar = Perioden, WelzijnIndex)
 ```
 
-```{r}
+```{r, include=FALSE}
 Ultimate_dataset_of_doom_hell_and_destruction <- full_join(
   Levensverwachting_geslacht_gemiddeld,
   Welzijn_naar_geslacht,
@@ -354,14 +354,14 @@ Ultimate_dataset_of_doom_hell_and_destruction <- full_join(
 )
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   filter(Marges == "MW00000") %>%
   select(-Marges) %>%
   rename(Jaar = Perioden)
 ```
 
-```{r}
+```{r, include=FALSE}
 packages <- c("sf", "dplyr", "ggplot2", "readr", "tmap", "stringr")
 installed <- rownames(installed.packages())
 for (pkg in packages) {
@@ -370,23 +370,23 @@ for (pkg in packages) {
 lapply(packages, library, character.only = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 setwd("~/GitHub/Programmeren/data")
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_shape <- st_read(
   "https://service.pdok.nl/cbs/gebiedsindelingen/2020/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json",
   quiet = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_shape <- gemeente_shape %>%
   select(statcode, statnaam, geometry) %>%
   rename(GM_CODE = statcode, GM_NAAM = statnaam)
 ```
 
-```{r}
+```{r, include=FALSE}
 data <- read_csv("data/GemeentesJuist.csv", locale = locale(encoding = "UTF-8"))
 ```
 
@@ -411,15 +411,15 @@ na_count <- sum(is.na(kaart_data$ErvarenGezondheidGoedZeerGoed_4))
 cat("Aantal gemeenten zonder data: ", na_count, "\n")
 ```
 
-```{r}
+```{r, include=FALSE}
 kaart_data <- st_simplify(kaart_data, dTolerance = 100)
 ```
 
-```{r}
+```{r, include=FALSE}
 tmap_mode("plot")
 ```
 
-```{r}
+```{r, include=FALSE}
 kaart_plot <- tm_shape(kaart_data) +
   tm_fill("ErvarenGezondheidGoedZeerGoed_4",
           palette = "Blues",
@@ -436,52 +436,52 @@ kaart_plot <- tm_shape(kaart_data) +
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 print(kaart_plot)
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
   filter(LeeftijdOp31December == "10010", Geslacht == "T001038") %>%
   mutate(Leeftijd = 0)
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   select(-Marges, -Geslacht, -LeeftijdOp31December)
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   rename(Jaar = Perioden)
 ```
 
-```{r}
+```{r, include=FALSE}
 welvaart_codes <- c(2021770, 2021780, 2021790, 2021800, 2021810)
 
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   filter(Kenmerken %in% welvaart_codes)
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   arrange(Kenmerken) %>%
   mutate(WelvaartQuintiles = c("1st quintile", "2nd quintile", "3rd quintile", "4th quintile", "5th quintile"))
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed_baby %>%
   select(Leeftijd, Jaar, WelvaartQuintiles, Levensverwachting_1)
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby$Levensverwachting_1 <- as.numeric(as.character(Levensverwachting_2016_renamed_baby$Levensverwachting_1))
 str(Levensverwachting_2016_renamed_baby)
 ```
 
 ### Plots:
 
-```{r}
+```{r, include=FALSE}
 ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
   geom_col(fill = "steelblue") +
   coord_flip(ylim = c(60, NA)) +  # <<--- set limit here
@@ -859,7 +859,8 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 
 ## 3.2 Generate necessary variables
 
-Variable 1
+Variable 1\
+description
 
 ```{r, eval=FALSE}
 Welzijn_averages <- Welzijn_Goed %>%
@@ -870,9 +871,7 @@ Welzijn_averages <- Welzijn_Goed %>%
     .groups = "drop" ) 
 ```
 
-Variable 2
-
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 Welzijn_index_2016 <- Welzijn_averages_2016 %>%
   select(
     Kenmerken, Marges, Perioden,
@@ -885,7 +884,7 @@ Welzijn_index_2016 <- Welzijn_averages_2016 %>%
     ScoreTevredenheidMetSociaalLeven_57 )
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 Welzijn_index_2016 <- Welzijn_index_2016 %>%
   mutate(WelzijnIndex = rowMeans(select(., 
                                    ScoreGeluk_1,ScoreTevredenheidMetHetLeven_5,ScoreTevredenheidMetWerk_13,ScoreTevredenheidDagelijkseBezigheden_21,ScoreTevredenheidMetLichGezondheid_25,ScoreTevredenheidPsychischeGezondheid_29,ScoreTevredenheidMetSociaalLeven_57), na.rm = TRUE))
@@ -893,10 +892,26 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
 
 ```{r, eval=FALSE}
 Welzijn_index_2016 <- Welzijn_index_2016 %>%
+  mutate(WelzijnIndex = rowMeans(select(.,
+    ScoreGeluk_1,
+    ScoreTevredenheidMetHetLeven_5,
+    ScoreTevredenheidMetWerk_13,
+    ScoreTevredenheidDagelijkseBezigheden_21,
+    ScoreTevredenheidMetLichGezondheid_25,
+    ScoreTevredenheidPsychischeGezondheid_29,
+    ScoreTevredenheidMetSociaalLeven_57
+  ), na.rm = TRUE))
+```
+
+```{r, eval=FALSE, include=FALSE}
+Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 ```
 
-```{r gen_var1, eval=FALSE, include=FALSE}
+Variable 2\
+description
+
+```{r gen_var1, eval=FALSE, include=TRUE}
 gemeente_cor <- gemeente_wijk_data %>%
   group_by(statnaam) %>%
   filter(n() >= 3) %>%
@@ -904,7 +919,9 @@ gemeente_cor <- gemeente_wijk_data %>%
     correlation = if (sum(complete.cases(as.numeric(Gemiddeld, ErvarenGezondheidGoedZeerGoed_4))) > 1)
       {cor(as.numeric(Gemiddeld), as.numeric(ErvarenGezondheidGoedZeerGoed_4), use = "complete.obs")} 
     else {NA_real_})
+```
 
+```{r include=FALSE}
 ###!!! CHECK IF THIS PART BELOW HAS TO BE EVEN IN HERE!!!###
 #This isnt creating new var, but adding to new data set
 #trimming white spaces so I can add the geometry for the heat map
@@ -916,10 +933,6 @@ gemeente_cor <- gemeente_cor %>%
 gemeente_wijk_mapdata <- gemeentegrenzen %>%
   left_join(gemeente_cor, by = "statnaam")
 ```
-
-We decided to make a new variable called "correlation" that we added
-
-Variable 2
 
 ```{r gen_var2}
 
@@ -989,8 +1002,7 @@ print(ggplot(Ervaren_Gezondheid_NL_AM_RO,
 
 ## 3.4 Visualize spatial variation
 
-```{r visualise_maps_side_by_side, fig.show='hold', fig.width=6, fig.height=3, echo=FALSE, message=FALSE, warning=FALSE}
-print(kaart_plot)
+```{r visualise_maps_side_by_side, fig.show='hold', fig.width=5.75, fig.height=2.5, echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(gemeente_wijk_mapdata) +
   geom_sf(aes(fill = correlation)) + 
@@ -1009,7 +1021,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 What is the poverty rate by state?
 
-```{r visualise_subpopulations, echo=FALSE}
+```{r visualise_subpopulations, echo=FALSE, fig.height=2.8, fig.width=5.8}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -1049,7 +1061,7 @@ Ervaren_Gezondheid <- Ervaren_Gezondheid[
     Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
 ```
 
-```{r Event_analysis, echo=FALSE}
+```{r Event_analysis, echo=FALSE, fig.height=3, fig.width=6}
 Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4)
 ggplot(Ervaren_Gezondheid, aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4, colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
 
@@ -1070,7 +1082,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 
 # Part 4 - Discussion
 
-## 4.1 Discuss your findings
+Despite the Dutch government's commitment to universal healthcare and equal access to services, significant health disparities remain between income groups. Research consistently shows that individuals with higher income and educational attainment experience better health and live longer than those in lower-income brackets (CBS, 2022; VZinfo, 2023). These inequalities, further emphasized by Pharos (2022), demonstrate that socioeconomic status remains a key determinant of health, even within a system designed to promote equity. Growing wealth inequality, driven by rising housing costs, job insecurity, and educational disparities, continues to widen this health gap. Addressing it requires more than general policy reforms; it demands a deeper understanding of how these disparities play out locally. By examining regional differences, we can better identify where and why these inequalities are most severe and design targeted interventions to ensure that all citizens, regardless of income, have the opportunity to live a healthy life.
 
 # Part 5 - Reproducibility
 
