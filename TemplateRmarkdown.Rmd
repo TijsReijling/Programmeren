@@ -107,13 +107,13 @@ This dataset provides us with information about the life expectancy across diffe
 
 [URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50132NED&_theme=101) + Metadata
 
-### Ervaren Gezondheid 'Wijken' & 'Buurten'
+### Ervaren Gezondheid 'Wijken' & 'Buurten' dataset
 
 The table contains self-reported health indicators through a questionnaire about health, social situation, and lifestyle at neighborhood, district, and municipal levels. The average of all people living in a municipality or neighbourhood is computed.
 
 [URL of the data download page](https://statline.rivm.nl/portal.html?_la=nl&_catalog=RIVM&tableId=50120NED&_theme=94) + Metadata
 
-### Inkomen Gemeentes
+### Inkomen Gemeentes dataset
 
 For each household within a municipality or neighbourhood, the total household income was calculated and then divided by the number of household members. This results in the average income per person, which accounts for differences in household size and provides a more accurate measure of individual economic well-being.
 
@@ -497,7 +497,7 @@ ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Leven
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
   Welzijn_naar_opleidingsniveau$Opleidingsniveau,
   levels = c(
@@ -510,7 +510,7 @@ Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
 )
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex, fill = Opleidingsniveau)) +
   geom_bar(stat = "identity", width = 0.7) +
   geom_text(
@@ -534,7 +534,7 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 opleidingskenmerken <- c(2018710, 2018720, 2018750, 2018800, 2018810)
 ```
 
@@ -584,7 +584,7 @@ Welzijn_temporal_visualization$Opleidingsniveau <- factor(
 )
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -612,7 +612,7 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(Ervaren_Gezondheid, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
@@ -643,7 +643,7 @@ ggplot(Ervaren_Gezondheid,
   theme(legend.position = "bottom")
 ```
 
-```{r}
+```{r, include=FALSE}
 plot_data <- Ultimate_dataset_of_doom_hell_and_destruction %>%
   select(Geslacht, Levensverwachting, WelzijnIndex) %>%
   pivot_longer(
@@ -660,11 +660,11 @@ plot_data <- Ultimate_dataset_of_doom_hell_and_destruction %>%
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 plot_data$Geslacht <- factor(plot_data$Geslacht, levels = c("Mannen", "Vrouwen"))
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
   geom_col(position = position_dodge(width = 0.9), width = 0.9) +
   geom_text(
@@ -695,7 +695,7 @@ ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
   )
 ```
 
-```{r}
+```{r, include=FALSE}
 Inkomen_per_wijk <- Inkomen_per_gemeente
 Inkomen_per_wijk <- Inkomen_per_wijk %>%
   filter(Regionaam != "Totaal")
@@ -703,19 +703,19 @@ Inkomen_per_wijk <- Inkomen_per_wijk %>%
   filter(Wijkcode != "Totaal")
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
   rename(Wijkcode = Codering_3, statnaam = Gemeentenaam_1)
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_gezondheid_wijk$SoortRegio_2 <- trimws(Ervaren_gezondheid_wijk$SoortRegio_2)
 Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
   mutate(Wijkcode = trimws(toupper(Wijkcode)))
 Ervaren_gezondheid_wijk <- filter(Ervaren_gezondheid_wijk, SoortRegio_2 %in% c("Gemeente", "Wijk"))
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
   filter(SoortRegio_2 == "Wijk")
 ```
@@ -726,12 +726,12 @@ gemeente_wijk_data <- inner_join(
   select(statnaam, Regionaam, Wijkcode, Gemiddeld, ErvarenGezondheidGoedZeerGoed_4)
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_wijk_data$ErvarenGezondheidGoedZeerGoed_4 <- as.numeric(gsub(",", ".", gemeente_wijk_data$ErvarenGezondheidGoedZeerGoed_4))
 gemeente_wijk_data$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_wijk_data$Gemiddeld))
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_cor <- gemeente_wijk_data %>%
   group_by(statnaam) %>%
   filter(n() >= 3) %>%
@@ -741,19 +741,19 @@ gemeente_cor <- gemeente_wijk_data %>%
     else {NA_real_})
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeentegrenzen <- gemeentegrenzen %>%
   mutate(statnaam = tolower(trimws(statnaam)))
 gemeente_cor <- gemeente_cor %>%
   mutate(statnaam = tolower(trimws(statnaam)))
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_wijk_mapdata <- gemeentegrenzen %>%
   left_join(gemeente_cor, by = "statnaam")
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(gemeente_wijk_mapdata) +
   geom_sf(aes(fill = correlation)) + 
   theme_minimal() +
@@ -765,7 +765,7 @@ ggplot(gemeente_wijk_mapdata) +
   labs(caption = "Grey areas = insufficient data") 
 ```
 
-```{r}
+```{r, include=FALSE}
 Inkomen_per_gemeente <- filter(Inkomen_per_gemeente, Wijkcode == "Totaal")
 Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Perioden == "2019G400") #2019G400 = gemiddelde van 2019/2022
 Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Geslacht == "T001038") #T001038 = Man + Vrouw
@@ -776,42 +776,42 @@ Levensverwachting_Gemeente <- Levensverwachting_Gemeente %>%
   filter(RegioS %in% Inkomen_per_gemeente$Gemeentecode)
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_data <- left_join(Inkomen_per_gemeente, Levensverwachting_Gemeente, by = c("Gemeentecode" = "RegioS"))
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_mapdata <- left_join(gemeentegrenzen, gemeente_data, by = c("statcode" = "Gemeentecode"))
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_mapdata$Gemiddeld <- as.numeric(gsub(",", ".", gemeente_mapdata$Gemiddeld)) #commas omzetten naar punten
 gemeente_mapdata$Levensverwachting_1 <- as.numeric(gemeente_mapdata$Levensverwachting_1)
 
 cor(gemeente_mapdata$Levensverwachting_1, gemeente_mapdata$Gemiddeld, use = "complete.obs")
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
   geom_point() +
   geom_smooth(method = "lm") +
   labs(x = "Income", y = "Life Expectancy")
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
   Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
     Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_Gezondheid <- Ervaren_Gezondheid %>%
   select(-Gemeentenaam_1, -SoortRegio_2, -Codering_3)
 
 Ervaren_Gezondheid_NL_AM_RO <- rbind(Ervaren_Gezondheid, ErvarenGezondheidNL)
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4 <- 
   as.numeric(Ervaren_Gezondheid_NL_AM_RO$ErvarenGezondheidGoedZeerGoed_4)
 
@@ -824,7 +824,7 @@ Ervaren_Gezondheid_NL_AM_RO <- Ervaren_Gezondheid_NL_AM_RO %>%
   ))
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(Ervaren_Gezondheid_NL_AM_RO, 
        aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
            colour = Region, group = Region)) +
