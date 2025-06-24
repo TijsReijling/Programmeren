@@ -133,9 +133,17 @@ Despite their recent publication, they are still collected in different years. L
 
 ## 3.1 Data cleaning
 
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
+To prepare the data for analysis and visualization, we lookted at multiple datasets retrieved from CBS, each focusing on different aspects of well-being, such as social participation, perceived health, and life satisfaction. The datasets were joined based on shared keys like `GemeenteCode`, `Perioden`, and `Geslacht`, allowing us to create a consistent panel structure. This merging approach was chosen because it preserved all available information while ensuring that each observation aligned across dimensions of time, gender, and region.
 
-```{r Isolate_both_datasets_for_2015_2018}
+Several cleaning steps were implemented to ensure data consistency. We selected only observations where `SoortRegio_2` indicated a municipality (`"Gemeente"`) and removed unnecessary columns such as margins (`"Marge"`) and region type indicators. New columns were created to standardize region names and construct a custom variable for gender (`GeslachtCustom`) to simplify filtering. These steps allowed us to make our plots more intuitive and focused.
+
+During this process, we identified structural inconsistencies in region naming conventions and variations in column formats across datasets. We addressed these by normalizing municipality names (e.g., converting to lowercase) and aligning column names prior to merging. Missing values were handled carefully, with averages computed using `na.rm = TRUE` where appropriate to avoid bias in index construction.
+
+In an ideal situation, standardized datasets with harmonized column names and formats would reduce the need for extensive preprocessing. However, given the raw CBS export format, our manual selection and transformation were necessary to produce clean and analyzable data.
+
+Overall, these cleaning and merging operations ensured a coherent dataset ready for temporal and subpopulation visualizations, enabling meaningful insights on well-being across Dutch municipalities.
+
+```{r Isolate_both_datasets_for_2015_2018, include=FALSE}
 Levensverwachting <- Levensverwachting[grepl("2015G400", Levensverwachting$Perioden),]
 Welzijn_Goed <- Welzijn_Goed[Welzijn_Goed$Perioden %in% c("2015JJ00", "2016JJ00", "2017JJ00", "2018JJ00"), ]
 ```
@@ -479,7 +487,8 @@ Levensverwachting_2016_renamed_baby$Levensverwachting_1 <- as.numeric(as.charact
 str(Levensverwachting_2016_renamed_baby)
 ```
 
-### Plots:
+```{r, Plots, include=FALSE}
+```
 
 ```{r, include=FALSE}
 ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
