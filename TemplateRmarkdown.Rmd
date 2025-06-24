@@ -1,6 +1,12 @@
 ---
-title: "Template"
-author: "Studentnames and studentnumbers here"
+title: "Income Inequality and Its Impact on Health and Life Expectancy Across Socioeconomic Groups in the Netherlands"
+author: "Sarah Driessens 2854343 
+Luke Eising 2645467
+Xander von Freytag Drabbe 2859036
+\\\\Tijs Reijling 2854229
+Haris Semen 
+Bas van Wijk 2864018
+Selim Yakali 2777497"
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
@@ -30,7 +36,8 @@ library(readr)
 
 # Title Page
 
-Include your names
+Sarah Driessens, Luke Eising, Xander von Freytag Drabbe, \
+Tijs Reijling, Haris Semen, Bas van Wijk & Selim Yakali
 
 Tutorial group 4
 
@@ -59,6 +66,8 @@ What has not been examined extensively is whether this inequality holds true acr
 # Part 2 - Data Sourcing
 
 ## 2.1 Load in the data
+
+[Google Drive URL with all data](https://drive.google.com/drive/folders/1rvVdds73_eQvnOZ_qclV67XdjTwQfReh?usp=sharing)
 
 ```{r message=FALSE, warning=FALSE}
 setwd("~/GitHub/Programmeren/data")
@@ -131,7 +140,7 @@ Despite their recent publication, they are still collected in different years. L
 
 ## 3.1 Data cleaning
 
-To prepare the data for analysis and visualization, we lookted at multiple datasets retrieved from CBS, each focusing on different aspects of well-being, such as social participation, perceived health, and life satisfaction. The datasets were joined based on shared keys like `GemeenteCode`, `Perioden`, and `Geslacht`, allowing us to create a consistent panel structure. This merging approach was chosen because it preserved all available information while ensuring that each observation aligned across dimensions of time, gender, and region.
+To prepare the data for analysis and visualization, we looked at multiple datasets retrieved from CBS, each focusing on different aspects of well-being, such as social participation, perceived health, and life satisfaction. The datasets were joined based on shared keys like `GemeenteCode` (Municipality code), `Perioden` (Year), and `Geslacht` (sex), allowing us to create a consistent panel structure. This merging approach was chosen because it preserved all available information while ensuring that each observation aligned across dimensions of time, gender, and region.
 
 Several cleaning steps were implemented to ensure data consistency. We selected only observations where `SoortRegio_2` indicated a municipality (`"Gemeente"`) and removed unnecessary columns such as margins (`"Marge"`) and region type indicators. New columns were created to standardize region names and construct a custom variable for gender (`GeslachtCustom`) to simplify filtering. These steps allowed us to make our plots more intuitive and focused.
 
@@ -862,8 +871,12 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 
 ## 3.2 Generate necessary variables
 
-Variable 1\
-description
+1st new variable\
+\
+We sought to be able to compare different sub-populations based on their (self-reported) well-being through a questionnaire. In the datasets we used the year periods that were both from 2015 till 2018, perfect for our analysis. However, we transformed the yearly statistics from 2015 till 2018 into an average over the 4 years and gave it the title of "2016". There were plans to merge with another dataset (Ervaren_Gezondheid) who did have the year 2016 and some other keys that aligned. This merge happened based on sex but did not end up being used for any graphs or analysis that we decided to keep in the rapport. So a note has to be made that the value that is used and given the name '2016' is really the average over those 4 years.\
+\
+After the averages were taken, we still had 65 columns of data. A lot of the columns were on different scales so we decided to create a new variable: Our 'WelzijnIndex'. We created a singular value from 7 of the columns of data all on the same 1 through 10 scale. This created a value that could be used to compare a lot of different sub-populations based on their well-being.\
+One of which we most importantly will use in 3.5, where we visualize sub-population variation based on level of education.
 
 ```{r, eval=FALSE}
 Welzijn_averages <- Welzijn_Goed %>%
@@ -1038,8 +1051,6 @@ Therefore, we considered zooming out the map out and display it at the provincia
 
 ## 3.5 Visualize sub-population variation
 
-What is the poverty rate by state?
-
 ```{r visualise_subpopulations, echo=FALSE, fig.height=2.8, fig.width=5.8}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
@@ -1067,8 +1078,6 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     axis.title.y = element_text(margin = margin(r = 10))
   )
 ```
-
-Here you provide a description of why the plot above is relevant to your specific social problem.
 
 ## 3.6 Event analysis
 
