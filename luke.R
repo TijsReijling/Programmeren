@@ -398,7 +398,7 @@ ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Leven
     axis.title.x = element_text(margin = margin(t = 10))
   )
 
-#Plot: Education level vs. Welfare Index
+#Plot: Education level vs. Well-being Index
 #Ensure the education level order is correct (most basic to most advanced)
 Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
   Welzijn_naar_opleidingsniveau$Opleidingsniveau,
@@ -423,9 +423,9 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
     breaks = seq(0, 10, 1)
   ) +
   labs(
-    title = "Welfare Index per Level of education (The Netherlands, 2016)",
+    title = "Well-being Index per Level of education (The Netherlands, 2016)",
     x = "Education level",
-    y = "Welfare Index (scale of 1-10)"
+    y = "Well-being Index (scale of 1-10)"
   ) +
   theme_minimal() +
   theme(
@@ -500,9 +500,9 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     )
   ) +
   labs(
-    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
+    title = "Evolution of Well-being Index per Level of Education (2015–2018)",
     x = "Year",
-    y = "Welfare Index",
+    y = "Well-being Index",
     color = "Education level"
   ) +
   theme_minimal() +

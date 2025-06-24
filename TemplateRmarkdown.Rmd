@@ -1,12 +1,7 @@
 ---
 title: "Income Inequality and Its Impact on Health and Life Expectancy Across Socioeconomic Groups in the Netherlands"
-author: "Sarah Driessens 2854343 
-Luke Eising 2645467
-Xander von Freytag Drabbe 2859036
-\\\\Tijs Reijling 2854229
-Haris Semen 
-Bas van Wijk 2864018
-Selim Yakali 2777497"
+author: "Sarah Driessens 2854343 Luke Eising 2645467 Xander von Freytag Drabbe 2859036  
+  Tijs Reijling 2854229 Haris Semen Bas van Wijk 2864018 Selim Yakali 2777497"
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
@@ -539,9 +534,9 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
     breaks = seq(0, 10, 1)
   ) +
   labs(
-    title = "Welfare Index per Level of education (The Netherlands, 2016)",
+    title = "Well-being Index per Level of education (The Netherlands, 2016)",
     x = "Education level",
-    y = "Welfare Index (scale of 1-10)"
+    y = "Well-being Index (scale of 1-10)"
   ) +
   theme_minimal() +
   theme(
@@ -615,9 +610,9 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     )
   ) +
   labs(
-    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
+    title = "Evolution of Well-being Index per Level of Education (2015–2018)",
     x = "Year",
-    y = "Welfare Index",
+    y = "Well-being Index",
     color = "Education level"
   ) +
   theme_minimal() +
@@ -1051,7 +1046,7 @@ Therefore, we considered zooming out the map out and display it at the provincia
 
 ## 3.5 Visualize sub-population variation
 
-```{r visualise_subpopulations, echo=FALSE, fig.height=2.8, fig.width=5.8}
+```{r visualise_subpopulations, echo=FALSE, fig.height=2.8, fig.width=6.15}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -1066,9 +1061,9 @@ ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = O
     )
   ) +
   labs(
-    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
+    title = "Evolution of Well-being Index per Level of Education (2015–2018)",
     x = "Year",
-    y = "Welfare Index",
+    y = "Well-being Index",
     color = "Education level"
   ) +
   theme_minimal() +
