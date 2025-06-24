@@ -174,34 +174,34 @@ Welzijn_averages <- Welzijn_Goed %>%
     .groups = "drop") 
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
   Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
     Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
 ```
 
-```{r}
+```{r, include=FALSE}
 Ervaren_Gezondheid_2016 <- Ervaren_Gezondheid[Ervaren_Gezondheid$Perioden == "2016JJ00", ]
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016 <- Levensverwachting %>%
   filter(Marges == "MW00000", Perioden == "2015G400") %>%
   mutate(Perioden = "2016")
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_averages_2016 <- Welzijn_averages %>%
   filter(Marges == "MW00000", Perioden == "2015–2018") %>%
   mutate(Perioden = "2016")
 ```
 
-```{r}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed <- Levensverwachting_2016 %>%
   rename(Kenmerken = InkomenEnWelvaart)
 ```
 
-```{r include=FALSE}
+```{r, include=FALSE}
 Levensverwachting_2016_renamed <- Levensverwachting_2016_renamed %>%
   mutate(Kenmerken = as.character(Kenmerken))
 
@@ -280,7 +280,7 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   filter(Kenmerken %in% c(
     "2018710",  # Basisonderwijs
@@ -291,7 +291,7 @@ Welzijn_naar_opleidingsniveau <- Welzijn_index_2016 %>%
   ))
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau <- Welzijn_naar_opleidingsniveau %>%
   mutate(
     Opleidingsniveau = case_when(
@@ -390,23 +390,23 @@ gemeente_shape <- gemeente_shape %>%
 data <- read_csv("data/GemeentesJuist.csv", locale = locale(encoding = "UTF-8"))
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_data <- data %>%
   filter(str_to_lower(SoortRegio_2) == "gemeente") %>%
   select(Gemeentenaam_1, ErvarenGezondheidGoedZeerGoed_4)
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_shape$GM_NAAM <- str_to_lower(gemeente_shape$GM_NAAM)
 gemeente_data$Gemeentenaam_1 <- str_to_lower(gemeente_data$Gemeentenaam_1)
 ```
 
-```{r}
+```{r, include=FALSE}
 kaart_data <- gemeente_shape %>%
   left_join(gemeente_data, by = c("GM_NAAM" = "Gemeentenaam_1"))
 ```
 
-```{r}
+```{r, include=FALSE}
 na_count <- sum(is.na(kaart_data$ErvarenGezondheidGoedZeerGoed_4))
 cat("Aantal gemeenten zonder data: ", na_count, "\n")
 ```
@@ -538,7 +538,7 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
 opleidingskenmerken <- c(2018710, 2018720, 2018750, 2018800, 2018810)
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_temporal_visualization <- Welzijn_Goed %>%
   filter(Kenmerken %in% opleidingskenmerken, Marges == "MW00000") %>%
   mutate(Jaar = as.numeric(substr(Perioden, 1, 4))) %>%
@@ -556,7 +556,7 @@ Welzijn_temporal_visualization <- Welzijn_Goed %>%
   select(Kenmerken, Jaar, WelzijnIndex)
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
   mutate(
     Opleidingsniveau = case_when(
@@ -571,7 +571,7 @@ Welzijn_temporal_visualization <- Welzijn_temporal_visualization %>%
   select(Opleidingsniveau, Jaar, WelzijnIndex)
 ```
 
-```{r}
+```{r, include=FALSE}
 Welzijn_temporal_visualization$Opleidingsniveau <- factor(
   Welzijn_temporal_visualization$Opleidingsniveau,
   levels = c(
@@ -720,7 +720,7 @@ Ervaren_gezondheid_wijk <- Ervaren_gezondheid_wijk %>%
   filter(SoortRegio_2 == "Wijk")
 ```
 
-```{r}
+```{r, include=FALSE}
 gemeente_wijk_data <- inner_join(
   Inkomen_per_wijk, Ervaren_gezondheid_wijk, by = "Wijkcode") %>%
   select(statnaam, Regionaam, Wijkcode, Gemiddeld, ErvarenGezondheidGoedZeerGoed_4)
@@ -851,10 +851,6 @@ ggplot(Ervaren_Gezondheid_NL_AM_RO,
   theme(legend.position = "bottom")
 ```
 
-```{r}
-
-```
-
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
 ## 3.2 Generate necessary variables
@@ -908,8 +904,14 @@ Welzijn_index_2016 <- Welzijn_index_2016 %>%
   select(Kenmerken, Marges, Perioden, WelzijnIndex)
 ```
 
-Variable 2\
-description
+2nd new variable\
+\
+Correlation Between Income and Experienced Health:\
+Our second variable calculates the correlation between experienced health and average income within each municipality. The two columns selected are: ErvarenGezondheidZeerGoed_4” (the percentage of people in a neighbourhood who grade their own health as good, or very good), and “Gemiddeld” (the average yearly wage in a neighbourhood divided by €1000).
+
+These variables were passed through the “cor()” function to calculate the correlation between these two variables for each municipality. The correlation was only computed for municipalities that had three or more neighbourhoods (with valid data).
+
+The decision to create this variable was to map how the relationship between health and income varies across municipalities in the Netherlands. This variable can be visualised on a heat map, helping us understand where and how income inequality contributes to differences in health.
 
 ```{r gen_var1, eval=FALSE, include=TRUE}
 gemeente_cor <- gemeente_wijk_data %>%
