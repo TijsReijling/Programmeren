@@ -462,6 +462,7 @@ Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
     "Vmbo, havo-, vwo-onderbouw, mbo1",
     "Havo, vwo, mbo2-4",
     "Hbo-, wo-bachelor",
+<<<<<<< HEAD
     "Hbo-, wo-master, doctor"
   )
 )
@@ -488,8 +489,10 @@ ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex
   theme(
     axis.text.x = element_text(angle = 30, hjust = 1, size = 7),
     legend.position = "none"
-  ) ("Hbo-, wo-master, doctor")
-
+  )
+=======
+    "Hbo-, wo-master, doctor"))
+>>>>>>> e432499522b75bee0b328c7559f376fc772427f6
 ```
 
 ```{r, include=FALSE}
@@ -537,6 +540,7 @@ Welzijn_temporal_visualization$Opleidingsniveau <- factor(
     "Hbo-, wo-bachelor",
     "Havo, vwo, mbo2-4",
     "Vmbo, havo-, vwo-onderbouw, mbo1",
+<<<<<<< HEAD
     "Basisonderwijs"
   )
 )
@@ -599,8 +603,9 @@ ggplot(Ervaren_Gezondheid,
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
-    ("Basisonderwijs")
-
+=======
+    "Basisonderwijs"))
+>>>>>>> e432499522b75bee0b328c7559f376fc772427f6
 ```
 
 ```{r, include=FALSE}
