@@ -7,7 +7,7 @@ Xander von Freytag Drabbe 2859036
 Haris Semen 
 Bas van Wijk 2864018
 Selim Yakali 2777497"
-date: "`r Sys.Date()`"
+date: "`24/06/2025"
 output:
   pdf_document: default
 ---
@@ -36,7 +36,7 @@ library(readr)
 
 # Title Page
 
-Sarah Driessens, Luke Eising, Xander von Freytag Drabbe, \
+Sarah Driessens, Luke Eising, Xander von Freytag Drabbe,\
 Tijs Reijling, Haris Semen, Bas van Wijk & Selim Yakali
 
 Tutorial group 4
@@ -236,31 +236,6 @@ Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4 <-
   as.numeric(as.character(Ervaren_Gezondheid$ErvarenGezondheidGoedZeerGoed_4))
 ```
 
-```{r include=FALSE, warning=FALSE}
-ggplot(Ervaren_Gezondheid, 
-       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
-           colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
-  geom_line(size = 1.5) +
-  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
-            colour = "black", 
-            vjust = -1,
-            show.legend = F) +
-  geom_point(colour = "black", size = 2.5, show.legend = F) +
-  
-  scale_colour_manual(values = c("#C41230", "#39B54A", "black")) +
-  scale_x_discrete(label = c(2012, 2016, 2020)) +
-  scale_y_continuous(
-    limits = c(65, 80),
-    breaks = seq(0, 100, by = 5)) +
-  
-  labs(x = "Year (2012, 2016, 2020)", 
-       y = "Perceived Health (% Good or Very Good)",
-       title = "Perceived Health per Municipality (2012-2020)",
-       colour = "Municipality") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
 ```{r include=FALSE}
 Welzijn_index_2016 <- Welzijn_averages_2016 %>%
   select(
@@ -435,27 +410,6 @@ tmap_mode("plot")
 ```
 
 ```{r, include=FALSE}
-kaart_plot <- tm_shape(kaart_data) +
-  tm_fill("ErvarenGezondheidGoedZeerGoed_4",
-          palette = "Blues",
-          title = "Perceived Health per Municipality (%)",
-          textNA = "No data") +
-  tm_borders() +
-  tm_layout(
-    title = "Perceived Health per Municipality in 2020",
-    title.position = c("center", "top"),
-    inner.margins = c(0.12, 0.02, 0.10, 0.02),
-    title.size = 1.5,
-    title.color = "black",
-    legend.outside = TRUE
-  )
-```
-
-```{r, include=FALSE}
-print(kaart_plot)
-```
-
-```{r, include=FALSE}
 Levensverwachting_2016_renamed_baby <- Levensverwachting_2016_renamed %>%
   filter(LeeftijdOp31December == "10010", Geslacht == "T001038") %>%
   mutate(Leeftijd = 0)
@@ -494,25 +448,6 @@ Levensverwachting_2016_renamed_baby$Levensverwachting_1 <- as.numeric(as.charact
 str(Levensverwachting_2016_renamed_baby)
 ```
 
-```{r, Plots, include=FALSE}
-```
-
-```{r, include=FALSE}
-ggplot(Levensverwachting_2016_renamed_baby, aes(x = WelvaartQuintiles, y = Levensverwachting_1)) +
-  geom_col(fill = "steelblue") +
-  coord_flip(ylim = c(60, NA)) +  # <<--- set limit here
-  labs(
-    title = "Life expectancy at birth per Total Wealth Quintile (2016)",
-    x = "Total Wealth Quintile",
-    y = "Life expectancy (in years)"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.title.y = element_text(margin = margin(r = 10)),
-    axis.title.x = element_text(margin = margin(t = 10))
-  )
-```
-
 ```{r, include=FALSE}
 Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
   Welzijn_naar_opleidingsniveau$Opleidingsniveau,
@@ -521,33 +456,7 @@ Welzijn_naar_opleidingsniveau$Opleidingsniveau <- factor(
     "Vmbo, havo-, vwo-onderbouw, mbo1",
     "Havo, vwo, mbo2-4",
     "Hbo-, wo-bachelor",
-    "Hbo-, wo-master, doctor"
-  )
-)
-```
-
-```{r, include=FALSE}
-ggplot(Welzijn_naar_opleidingsniveau, aes(x = Opleidingsniveau, y = WelzijnIndex, fill = Opleidingsniveau)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  geom_text(
-    aes(label = round(WelzijnIndex, 3)),   # 3 decimals
-    vjust = -0.4,
-    size = 4
-  ) +
-  scale_y_continuous(
-    limits = c(0, 10),
-    breaks = seq(0, 10, 1)
-  ) +
-  labs(
-    title = "Welfare Index per Level of education (The Netherlands, 2016)",
-    x = "Education level",
-    y = "Welfare Index (scale of 1-10)"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 30, hjust = 1, size = 7),
-    legend.position = "none"
-  )
+    "Hbo-, wo-master, doctor"))
 ```
 
 ```{r, include=FALSE}
@@ -595,68 +504,7 @@ Welzijn_temporal_visualization$Opleidingsniveau <- factor(
     "Hbo-, wo-bachelor",
     "Havo, vwo, mbo2-4",
     "Vmbo, havo-, vwo-onderbouw, mbo1",
-    "Basisonderwijs"
-  )
-)
-```
-
-```{r, include=FALSE}
-ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
-  geom_line(size = 1.2) +
-  geom_point(size = 2) +
-  scale_x_continuous(breaks = 2015:2018) +
-  scale_color_manual(
-    values = c(
-      "Basisonderwijs" = "#F8766D",
-      "Vmbo, havo-, vwo-onderbouw, mbo1" = "#C49A00",
-      "Havo, vwo, mbo2-4" = "#00BA38",
-      "Hbo-, wo-bachelor" = "#00BFC4",
-      "Hbo-, wo-master, doctor" = "#C77CFF"
-    )
-  ) +
-  labs(
-    title = "Evolution of Welfare Index per Level of Education (2015–2018)",
-    x = "Year",
-    y = "Welfare Index",
-    color = "Education level"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 9, face = "bold", hjust = 0.5),
-    axis.title.x = element_text(margin = margin(t = 10)),
-    axis.title.y = element_text(margin = margin(r = 10))
-  )
-```
-
-```{r, include=FALSE}
-ggplot(Ervaren_Gezondheid, 
-       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
-           colour = Gemeentenaam_1, group = Gemeentenaam_1)) +
-  
-  geom_line(size = 1.5) +
-  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4),
-            colour = "black", vjust = -1, show.legend = FALSE) +
-  geom_point(colour = "black", size = 2.5, show.legend = FALSE) +
-  geom_segment(aes(x = 2, xend = 2, y = 68.4 - 1.7, yend = 68.4 + 2.1), 
-               color = "black", linewidth = 0.4) +
-  annotate("text", x = 2, y = 69.9 - 3.3, label = "Rotterdam Vitaal en Healthy", 
-           color = "black", angle = 0, vjust = 1, size = 3) +
-  geom_segment(aes(x = 2.33, xend = 2.33, y = 73.8 - 0.4, yend = 73.8 + 2.8), 
-               color = "black", linewidth = 0.4) +
-  annotate("text", x = 2.25, y = 79 - 1.3, label = "Amsterdam Vitaal & Gezond", 
-           color = "black", angle = 0, vjust = 1, size = 3) +
-  scale_colour_manual(values = c("Amsterdam" = "#C41230", "Rotterdam" = "#39B54A")) +
-  scale_x_discrete(label = c(2012, 2016, 2020)) +
-  scale_y_continuous(limits = c(65, 80), breaks = seq(0, 100, 5)) +
-  
-  labs(
-    x = "Year (2012, 2016, 2020)", 
-    y = "Perceived Health (% Good or Very Good)",
-    title = "Perceived Health per Municipality (2012-2020)",
-    colour = "Municipality"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+    "Basisonderwijs"))
 ```
 
 ```{r, include=FALSE}
@@ -678,37 +526,6 @@ plot_data <- Ultimate_dataset_of_doom_hell_and_destruction %>%
 
 ```{r, include=FALSE}
 plot_data$Geslacht <- factor(plot_data$Geslacht, levels = c("Mannen", "Vrouwen"))
-```
-
-```{r, include=FALSE}
-ggplot(plot_data, aes(x = Metric, y = Value, fill = Geslacht)) +
-  geom_col(position = position_dodge(width = 0.9), width = 0.9) +
-  geom_text(
-    aes(label = Label),
-    position = position_dodge(width = 0.9),
-    vjust = -0.5,
-    color = "black",
-    size = 5
-  ) +
-  scale_fill_manual(
-    name = "Gender",
-    values = c("Mannen" = "#4B9CD3", "Vrouwen" = "#E06F8B"),
-    labels = c("Mannen" = "Men", "Vrouwen" = "Women")
-  ) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +  # <- extra ruimte boven balken
-  labs(
-    title = "Difference in life expectancy and well-being: Men vs Women",
-    x = "",
-    y = "Value"
-  ) +
-  theme_minimal(base_size = 10) +
-  theme(
-    plot.title = element_text(
-      face = "bold",
-      hjust = 0.4,
-      margin = margin(b = 15)  # <- ruimte onder titel
-    )
-  )
 ```
 
 ```{r, include=FALSE}
@@ -770,18 +587,6 @@ gemeente_wijk_mapdata <- gemeentegrenzen %>%
 ```
 
 ```{r, include=FALSE}
-ggplot(gemeente_wijk_mapdata) +
-  geom_sf(aes(fill = correlation)) + 
-  theme_minimal() +
-  scale_fill_gradient2(high = "#6A0DAD", mid = "lightgrey", low = "#FFD700",
-                       limits = c(-1, 1),
-                       breaks = c(-1, -0.5, 0, 0.5, 1),
-                       name = "Correlation 'income & health'") +
-  theme(legend.position = "left") + 
-  labs(caption = "Grey areas = insufficient data") 
-```
-
-```{r, include=FALSE}
 Inkomen_per_gemeente <- filter(Inkomen_per_gemeente, Wijkcode == "Totaal")
 Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Perioden == "2019G400") #2019G400 = gemiddelde van 2019/2022
 Levensverwachting_Gemeente <- filter(Levensverwachting_Gemeente, Geslacht == "T001038") #T001038 = Man + Vrouw
@@ -808,13 +613,6 @@ cor(gemeente_mapdata$Levensverwachting_1, gemeente_mapdata$Gemiddeld, use = "com
 ```
 
 ```{r, include=FALSE}
-ggplot(gemeente_mapdata, aes(x = Gemiddeld, y = Levensverwachting_1)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  labs(x = "Income", y = "Life Expectancy")
-```
-
-```{r, include=FALSE}
 Ervaren_Gezondheid <- Ervaren_Gezondheid[
   Ervaren_Gezondheid$Gemeentenaam_1 %in% c("Amsterdam", "Rotterdam") &
     Ervaren_Gezondheid$SoortRegio_2 == "Gemeente",]
@@ -836,38 +634,8 @@ Ervaren_Gezondheid_NL_AM_RO <- Ervaren_Gezondheid_NL_AM_RO %>%
     WijkenEnBuurten == "GM0363" ~ "Amsterdam",
     WijkenEnBuurten == "GM0599" ~ "Rotterdam",
     WijkenEnBuurten == "NL01"   ~ "The Netherlands",
-    TRUE ~ NA_character_
-  ))
+    TRUE ~ NA_character_ ))
 ```
-
-```{r, include=FALSE}
-ggplot(Ervaren_Gezondheid_NL_AM_RO, 
-       aes(x = Perioden, y = ErvarenGezondheidGoedZeerGoed_4,
-           colour = Region, group = Region)) +
-  geom_line(size = 1.5) +
-  geom_point(colour = "black", size = 2.5, show.legend = FALSE) +
-  geom_text(aes(label = ErvarenGezondheidGoedZeerGoed_4,
-                vjust = ifelse(Region == "The Netherlands", -0.8, 1.9)),
-            colour = "black", 
-            show.legend = FALSE) +
-  scale_colour_manual(values = c(
-    "Amsterdam" = "#C41230",
-    "Rotterdam" = "#39B54A",
-    "The Netherlands" = "orange"
-  )) +
-  scale_x_discrete(labels = c("2012", "2016", "2020")) +
-  scale_y_continuous(limits = c(65, 80), breaks = seq(0, 100, by = 5)) +
-  labs(
-    x = "Year (2012, 2016, 2020)",
-    y = "Perceived health (% wel or very well)",
-    title = "Perceived Health per Municipality",
-    colour = "Region"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
 ## 3.2 Generate necessary variables
 
@@ -941,23 +709,6 @@ gemeente_cor <- gemeente_wijk_data %>%
     correlation = if (sum(complete.cases(as.numeric(Gemiddeld, ErvarenGezondheidGoedZeerGoed_4))) > 1)
       {cor(as.numeric(Gemiddeld), as.numeric(ErvarenGezondheidGoedZeerGoed_4), use = "complete.obs")} 
     else {NA_real_})
-```
-
-```{r include=FALSE}
-###!!! CHECK IF THIS PART BELOW HAS TO BE EVEN IN HERE!!!###
-#This isnt creating new var, but adding to new data set
-#trimming white spaces so I can add the geometry for the heat map
-gemeentegrenzen <- gemeentegrenzen %>%
-  mutate(statnaam = tolower(trimws(statnaam)))
-gemeente_cor <- gemeente_cor %>%
-  mutate(statnaam = tolower(trimws(statnaam)))
-
-gemeente_wijk_mapdata <- gemeentegrenzen %>%
-  left_join(gemeente_cor, by = "statnaam")
-```
-
-```{r gen_var2}
-
 ```
 
 ## 3.3 Visualize temporal variation
@@ -1045,9 +796,7 @@ This heat map shows the strength of the correlation between the average income a
 
 The prevalence of purple on the map indicates a moderate positive correlation between income and experienced health in most municipalities. Although it should be noted that correlation does not equal causation, we can confirm there exists a relation between the two.
 
-One limitation of this map is the existence of grey areas that could not be computed due to a lack of data. In general, correlations are more accurate when they are based of a larger dataset.
-
-Therefore, we considered zooming out the map out and display it at the provincial level. However, we decided to not go with this approach, because it would lead to underrepresentation of urban areas by assigning them the same weight as less populated municipalities within each province. This issue could be solved by assigning weight to municipalities, but this would over complicate things. Additionally, keeping the map at the municipal level allows for a clearer visualisation of contrast between urban and rural areas.
+One limitation of this map is the existence of grey areas that could not be computed due to a lack of data. In general, correlations are more accurate when they are based of a larger dataset. Therefore, we considered zooming out the map out and display it at the provincial level. However, we decided to not go with this approach, because it would lead to underrepresentation of urban areas by assigning them the same weight as less populated municipalities within each province. This issue could be solved by assigning weight to municipalities, but this would over complicate things. Additionally, keeping the map at the municipal level allows for a clearer visualisation of contrast between urban and rural areas.
 
 ## 3.5 Visualize sub-population variation
 
