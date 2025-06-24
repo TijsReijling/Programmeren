@@ -60,8 +60,6 @@ What has not been examined extensively is whether this inequality holds true acr
 
 ## 2.1 Load in the data
 
-[Google Drive URL with all data](https://drive.google.com/drive/folders/1rvVdds73_eQvnOZ_qclV67XdjTwQfReh?usp=sharing)
-
 ```{r message=FALSE, warning=FALSE}
 setwd("~/GitHub/Programmeren/data")
 
@@ -129,13 +127,11 @@ Our sources provide us with data about life expectancy, experienced health (erva
 
 Despite their recent publication, they are still collected in different years. Large global or national events (like COVID-19) may have affected the data. These events could impact our data, skewing our results. Also life expectancy and Experienced health are not perfect indicators for ones health. For example, life expectancy is heavily impacted by one’s genetics, so income might have little influence in this. The life expectancy could also vary due to accidents. If one group of people get in fatal accidents more often, than this could also impact their life expectancy. experienced health also has an obvious flaw, they are based of reports that are not made by an export. That means that the values gives by participants is inherently inaccurate.
 
-*For the sake of this example, I will continue with the assignment...*
-
 # Part 3 - Quantifying
 
 ## 3.1 Data cleaning
 
-To prepare the data for analysis and visualization, we looked at multiple datasets retrieved from CBS, each focusing on different aspects of well-being, such as social participation, perceived health, and life satisfaction. The datasets were joined based on shared keys like `GemeenteCode` (Municipality code), `Perioden` (Year), and `Geslacht` (sex), allowing us to create a consistent panel structure. This merging approach was chosen because it preserved all available information while ensuring that each observation aligned across dimensions of time, gender, and region.
+To prepare the data for analysis and visualization, we lookted at multiple datasets retrieved from CBS, each focusing on different aspects of well-being, such as social participation, perceived health, and life satisfaction. The datasets were joined based on shared keys like `GemeenteCode`, `Perioden`, and `Geslacht`, allowing us to create a consistent panel structure. This merging approach was chosen because it preserved all available information while ensuring that each observation aligned across dimensions of time, gender, and region.
 
 Several cleaning steps were implemented to ensure data consistency. We selected only observations where `SoortRegio_2` indicated a municipality (`"Gemeente"`) and removed unnecessary columns such as margins (`"Marge"`) and region type indicators. New columns were created to standardize region names and construct a custom variable for gender (`GeslachtCustom`) to simplify filtering. These steps allowed us to make our plots more intuitive and focused.
 
@@ -866,11 +862,8 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 
 ## 3.2 Generate necessary variables
 
-1st new variable\
-\
-We sought to be able to compare different sub-population groups based on their (self-reported) well-being through a questionnaire. In the datasets we used the year periods were both from 2015 till 2018, perfect for our analysis. However, we transformed the yearly statistics from 2015 till 2018 into the average over the 4 years and gave it the title of "2016". There were plans to merge with another dataset (Ervaren_Gezondheid) who did have the year 2016 and some other keys that aligned. This did merge happened based on sex but did not end up being used for any graphs that we decided to keep in the rapport. So a note has to be made that the value that is used and given the name '2016' is really the average over those 4 years.\
-\
-After the averages were taken, we still had 65 columns of data. A lot of the columns were on different scales so we decided to create a new variable: Our 'WelzijnIndex'. We created a singular value from 7 of the columns of data all on the same 1 through 10 scale. This created a value that could be used to compare a lot of different sub-population groups
+Variable 1\
+description
 
 ```{r, eval=FALSE}
 Welzijn_averages <- Welzijn_Goed %>%
@@ -1035,9 +1028,17 @@ ggplot(gemeente_wijk_mapdata) +
   labs(caption = "Grey areas = insufficient data")
 ```
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
+This heat map shows the strength of the correlation between the average income and experienced health across neighbourhoods within each municipality in the Netherlands. Municipalities that include fewer than three neighbourhoods with valid data are marked in grey. For each municipality with sufficient data (three or more neighbourhoods), a correlation coefficient was calculated using the “cor()” function. High correlation areas (dark purple) are mainly found in urban areas like Rotterdam and Groningen, whereas low correlation areas (yellow) are mainly found in rural areas such as Kapelle, Veere and Reimerswaal in Zeeland. These yellow areas are rare and are likely caused by data inconsistencies or an anomalies.
+
+The prevalence of purple on the map indicates a moderate positive correlation between income and experienced health in most municipalities. Although it should be noted that correlation does not equal causation, we can confirm there exists a relation between the two.
+
+One limitation of this map is the existence of grey areas that could not be computed due to a lack of data. In general, correlations are more accurate when they are based of a larger dataset.
+
+Therefore, we considered zooming out the map out and display it at the provincial level. However, we decided to not go with this approach, because it would lead to underrepresentation of urban areas by assigning them the same weight as less populated municipalities within each province. This issue could be solved by assigning weight to municipalities, but this would over complicate things. Additionally, keeping the map at the municipal level allows for a clearer visualisation of contrast between urban and rural areas.
 
 ## 3.5 Visualize sub-population variation
+
+What is the poverty rate by state?
 
 ```{r visualise_subpopulations, echo=FALSE, fig.height=2.8, fig.width=5.8}
 ggplot(Welzijn_temporal_visualization, aes(x = Jaar, y = WelzijnIndex, color = Opleidingsniveau, group = Opleidingsniveau)) +
