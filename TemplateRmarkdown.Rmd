@@ -1000,6 +1000,10 @@ print(ggplot(Ervaren_Gezondheid_NL_AM_RO,
   theme(legend.position = "bottom"))
 ```
 
+The Perceived Health per Municipality shows how the perceived health in different regions fluctuates across different time points. We see clear temporal patterns, with periods of increase and decrease indicating variability over time. This suggests that the underlying phenomenon is not static, but undergoes notable changes, highlighting the importance of considering temporal dynamics in the analysis.
+
+Overall, we can see that the self-reported Perceived Health in the Netherlands hovered around 75-76% between the years 2012 and 2016, however, we can see a big increase between the years 2016-2020. This variation will be looked at in the "event analysis" section, to figure out why the changes can be so drastic on municipality level in relation to country-wide level.
+
 ## 3.4 Visualize spatial variation
 
 ```{r visualise_maps_side_by_side, fig.show='hold', fig.width=5.75, fig.height=2.5, echo=FALSE, message=FALSE, warning=FALSE}
